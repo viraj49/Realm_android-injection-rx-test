@@ -6,7 +6,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import tank.viraj.realm.dataSource.GitHubUserProfileDataSource;
-import tank.viraj.realm.model.GitHubUserProfile;
+import tank.viraj.realm.jsonModel.GitHubUserProfile;
 import tank.viraj.realm.ui.fragment.GitHubUserProfileFragment;
 
 /**

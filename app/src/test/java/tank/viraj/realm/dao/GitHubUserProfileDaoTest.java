@@ -2,7 +2,6 @@ package tank.viraj.realm.dao;
 
 import android.content.Context;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,10 +20,11 @@ import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.internal.RealmCore;
 import tank.viraj.realm.BuildConfig;
-import tank.viraj.realm.model.GitHubUserProfile;
+import tank.viraj.realm.jsonModel.GitHubUserProfile;
 import tank.viraj.realm.realmModel.GitHubUserProfileRealm;
 import tank.viraj.realm.realmModel.GitHubUserRealm;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -89,9 +89,9 @@ public class GitHubUserProfileDaoTest {
     public void getGitHubUserProfileTest1() {
         GitHubUserProfile gitHubUserProfile = gitHubUserProfileDao.getProfile("testLogin1");
 
-        Assert.assertEquals("testLogin1", gitHubUserProfile.getLogin());
-        Assert.assertEquals("testName1", gitHubUserProfile.getName());
-        Assert.assertEquals("testEmail1", gitHubUserProfile.getEmail());
+        assertEquals("testLogin1", gitHubUserProfile.getLogin());
+        assertEquals("testName1", gitHubUserProfile.getName());
+        assertEquals("testEmail1", gitHubUserProfile.getEmail());
     }
 
     /* clear getGitHubUserProfile from Realm */
@@ -99,9 +99,9 @@ public class GitHubUserProfileDaoTest {
     public void getGitHubUserProfileTest2() {
         GitHubUserProfile gitHubUserProfile = gitHubUserProfileDao.getProfile("testLogin2");
 
-        Assert.assertEquals("testLogin2", gitHubUserProfile.getLogin());
-        Assert.assertEquals("testName2", gitHubUserProfile.getName());
-        Assert.assertEquals("testEmail2", gitHubUserProfile.getEmail());
+        assertEquals("testLogin2", gitHubUserProfile.getLogin());
+        assertEquals("testName2", gitHubUserProfile.getName());
+        assertEquals("testEmail2", gitHubUserProfile.getEmail());
     }
 
     /* get getGitHubUserProfile from Realm */
@@ -109,7 +109,7 @@ public class GitHubUserProfileDaoTest {
     public void getNullGitHubUserProfileTestTest() {
         GitHubUserProfile gitHubUserProfile = gitHubUserProfileDao.getProfile("testLogin3");
 
-        Assert.assertEquals(null, gitHubUserProfile);
+        assertEquals(null, gitHubUserProfile);
     }
 
     /* get getGitHubUsersList list from Realm */
@@ -117,17 +117,17 @@ public class GitHubUserProfileDaoTest {
     public void clearGitHubUserProfileTest() {
         GitHubUserProfile gitHubUserProfile = gitHubUserProfileDao.getProfile("testLogin1");
 
-        Assert.assertEquals("testLogin1", gitHubUserProfile.getLogin());
-        Assert.assertEquals("testName1", gitHubUserProfile.getName());
-        Assert.assertEquals("testEmail1", gitHubUserProfile.getEmail());
+        assertEquals("testLogin1", gitHubUserProfile.getLogin());
+        assertEquals("testName1", gitHubUserProfile.getName());
+        assertEquals("testEmail1", gitHubUserProfile.getEmail());
 
         gitHubUserProfileDao.clearDatabase();
 
         gitHubUserProfile = gitHubUserProfileDao.getProfile("testLogin1");
 
-        Assert.assertEquals("testLogin1", gitHubUserProfile.getLogin());
-        Assert.assertEquals("testName1", gitHubUserProfile.getName());
-        Assert.assertEquals("testEmail1", gitHubUserProfile.getEmail());
+        assertEquals("testLogin1", gitHubUserProfile.getLogin());
+        assertEquals("testName1", gitHubUserProfile.getName());
+        assertEquals("testEmail1", gitHubUserProfile.getEmail());
     }
 
     @SuppressWarnings("unchecked")

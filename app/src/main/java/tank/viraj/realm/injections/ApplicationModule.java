@@ -34,11 +34,25 @@ public class ApplicationModule {
         this.application = application;
     }
 
+    /* Provides secure key for Realm */
+    @Provides
+    @Singleton
+    public byte[] provideKey() {
+        char[] chars = "16CharacterLongPasswordKey4Realm".toCharArray();
+        byte[] bytes = new byte[chars.length * 2];
+        for (int i = 0; i < chars.length; i++) {
+            bytes[i * 2] = (byte) (chars[i] >> 8);
+            bytes[i * 2 + 1] = (byte) chars[i];
+        }
+        return bytes;
+    }
+
     /* Provides singleton Realm configuration for all Dao class */
     @Provides
     @Singleton
-    public RealmConfiguration provideRealmConfiguration() {
+    public RealmConfiguration provideRealmConfiguration(byte[] key) {
         return new RealmConfiguration.Builder(application.getApplicationContext())
+                .encryptionKey(key)
                 .deleteRealmIfMigrationNeeded()
                 .build();
     }

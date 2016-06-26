@@ -2,25 +2,17 @@ package tank.viraj.realm.realmModel;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
 
 /**
  * Created by Viraj Tank, 20/06/16.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class GitHubUserRealmTest {
-
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-    }
-
     @Test
     public void createObjectTest() {
         GitHubUserRealm gitHubUserRealm = new GitHubUserRealm(1, "testLogin", "testAvatarUrl");

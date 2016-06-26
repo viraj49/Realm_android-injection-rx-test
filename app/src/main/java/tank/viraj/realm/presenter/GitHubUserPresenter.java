@@ -8,7 +8,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import tank.viraj.realm.dataSource.GitHubUserListDataSource;
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
 import tank.viraj.realm.ui.fragment.GitHubUserListFragment;
 
 /**
@@ -53,6 +53,7 @@ public class GitHubUserPresenter {
     }
 
     public void clearGitHubUserListFromRealm() {
+
         gitHubUserListDataSource.clearRealmData();
     }
 

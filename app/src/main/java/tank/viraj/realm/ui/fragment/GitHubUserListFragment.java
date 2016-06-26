@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 import tank.viraj.realm.MainApplication;
 import tank.viraj.realm.R;
 import tank.viraj.realm.adapter.MainAdapter;
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
 import tank.viraj.realm.presenter.GitHubUserPresenter;
 import tank.viraj.realm.ui.activity.GitHubUserProfileActivity;
 

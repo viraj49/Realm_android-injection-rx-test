@@ -1,4 +1,4 @@
-package tank.viraj.realm.model;
+package tank.viraj.realm.jsonModel;
 
 import junit.framework.Assert;
 

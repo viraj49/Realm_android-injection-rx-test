@@ -21,8 +21,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import tank.viraj.realm.MainApplication;
 import tank.viraj.realm.R;
-import tank.viraj.realm.model.GitHubUser;
-import tank.viraj.realm.model.GitHubUserProfile;
+import tank.viraj.realm.jsonModel.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUserProfile;
 import tank.viraj.realm.presenter.GitHubUserProfilePresenter;
 
 /**

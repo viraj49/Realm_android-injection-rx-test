@@ -3,7 +3,7 @@ package tank.viraj.realm.realmModel;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import lombok.Getter;
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
 
 /**
  * Created by Viraj Tank, 18-06-2016.

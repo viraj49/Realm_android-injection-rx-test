@@ -5,7 +5,7 @@ import java.util.List;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import tank.viraj.realm.dao.GitHubUserDao;
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
 
 /**

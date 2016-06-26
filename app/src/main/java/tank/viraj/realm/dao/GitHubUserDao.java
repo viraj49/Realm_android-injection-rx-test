@@ -1,11 +1,13 @@
 package tank.viraj.realm.dao;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
 import tank.viraj.realm.realmModel.GitHubUserRealm;
 
 /**
@@ -20,6 +22,7 @@ public class GitHubUserDao extends AbstractDao {
     public void storeOrUpdateGitHubUserList(List<GitHubUser> gitHubUserList) {
         Realm realm = Realm.getInstance(realmConfiguration);
         realm.executeTransaction(realm1 -> realm1.copyToRealmOrUpdate(fromModelToRealm(gitHubUserList)));
+        Log.e("VIRAJ", "Realm = " + realm.getPath());
         realm.close();
     }
 

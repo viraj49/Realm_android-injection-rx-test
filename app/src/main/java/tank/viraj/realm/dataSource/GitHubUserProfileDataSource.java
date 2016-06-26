@@ -4,7 +4,7 @@ import rx.Observable;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import tank.viraj.realm.dao.GitHubUserProfileDao;
-import tank.viraj.realm.model.GitHubUserProfile;
+import tank.viraj.realm.jsonModel.GitHubUserProfile;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
 
 /**
