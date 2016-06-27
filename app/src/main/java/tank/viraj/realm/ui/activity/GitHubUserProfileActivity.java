@@ -22,11 +22,15 @@ public class GitHubUserProfileActivity extends AppCompatActivity {
         /* get the GitHubUser object,
          * create the fragment and load it in frame layout */
         GitHubUserProfileFragment gitHubUserProfileFragment = new GitHubUserProfileFragment();
-        GitHubUser gitHubUser = (GitHubUser) getIntent().getSerializableExtra(getString(R.string.github_user_key));
+        GitHubUser gitHubUser = (GitHubUser) getIntent()
+                .getSerializableExtra(getString(R.string.github_user_key));
         gitHubUserProfileFragment.setGitHubUser(gitHubUser);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.activity_profile, gitHubUserProfileFragment)
-                .commit();
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.activity_profile, gitHubUserProfileFragment)
+                    .commit();
+        }
     }
 
     private void setActionBarTitle() {
