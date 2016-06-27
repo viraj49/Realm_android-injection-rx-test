@@ -19,10 +19,11 @@ public class GitHubUserListActivity extends AppCompatActivity {
         setActionBarTitle();
 
         /* create the fragment and load it in frame layout */
-        GitHubUserListFragment gitHubUserListFragment = new GitHubUserListFragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.activity_main, gitHubUserListFragment)
-                .commit();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+            .add(R.id.activity_main, new GitHubUserListFragment())
+            .commit();
+        }
     }
 
     private void setActionBarTitle() {
