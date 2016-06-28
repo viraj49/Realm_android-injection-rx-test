@@ -21,8 +21,8 @@ public class GitHubUserListActivity extends AppCompatActivity {
         /* create the fragment and load it in frame layout */
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_main, new GitHubUserListFragment())
-                    .commit();
+            .add(R.id.activity_main, new GitHubUserListFragment())
+            .commit();
         }
     }
 
