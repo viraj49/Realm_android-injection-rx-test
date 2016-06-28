@@ -1,7 +1,6 @@
 package tank.viraj.realm.dataSource;
 
 import rx.Observable;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import tank.viraj.realm.dao.GitHubUserProfileDao;
 import tank.viraj.realm.jsonModel.GitHubUserProfile;
@@ -14,17 +13,21 @@ public class GitHubUserProfileDataSource {
     private GitHubApiInterface gitHubApiInterface;
     private GitHubUserProfileDao gitHubUserProfileDao;
 
-    public GitHubUserProfileDataSource(GitHubApiInterface gitHubApiInterface, GitHubUserProfileDao gitHubUserProfileDao) {
+    public GitHubUserProfileDataSource(GitHubApiInterface gitHubApiInterface,
+                                       GitHubUserProfileDao gitHubUserProfileDao) {
         this.gitHubApiInterface = gitHubApiInterface;
         this.gitHubUserProfileDao = gitHubUserProfileDao;
     }
 
     public Observable<GitHubUserProfile> getGitHubUserProfile(String login, boolean isForced) {
-        return Observable.concat(getGitHubUserProfileFromRealm(login, isForced), getGitHubUserProfileFromRetrofit(login))
+        return Observable.concat(
+                getGitHubUserProfileFromRealm(login, isForced),
+                getGitHubUserProfileFromRetrofit(login))
                 .takeFirst(profile -> profile != null);
     }
 
-    private Observable<GitHubUserProfile> getGitHubUserProfileFromRealm(String login, boolean isForced) {
+    private Observable<GitHubUserProfile> getGitHubUserProfileFromRealm(String login,
+                                                                        boolean isForced) {
         return Observable.just(isForced)
                 .filter(isForcedIn -> !isForcedIn)
                 .subscribeOn(Schedulers.immediate())
@@ -34,12 +37,9 @@ public class GitHubUserProfileDataSource {
 
     private Observable<GitHubUserProfile> getGitHubUserProfileFromRetrofit(String login) {
         return gitHubApiInterface.getGitHubUserProfile(login)
-                .map(new Func1<GitHubUserProfile, GitHubUserProfile>() {
-                    @Override
-                    public GitHubUserProfile call(GitHubUserProfile profile) {
-                        gitHubUserProfileDao.storeOrUpdateProfile(profile);
-                        return profile;
-                    }
+                .map(profile -> {
+                    gitHubUserProfileDao.storeOrUpdateProfile(profile);
+                    return profile;
                 });
     }
 

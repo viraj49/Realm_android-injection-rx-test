@@ -45,7 +45,8 @@ public class GitHubUserListDataSourceTest {
         List<GitHubUser> gitHubUserList = Arrays.asList(p1, p2);
 
         Mockito.when(gitHubUserDao.getGitHubUserList()).thenReturn(gitHubUserList);
-        Mockito.when(gitHubApiInterface.getGitHubUsersList()).thenReturn(Observable.just(gitHubUserList));
+        Mockito.when(gitHubApiInterface.getGitHubUsersList())
+                .thenReturn(Observable.just(gitHubUserList));
 
         TestSubscriber<List<GitHubUser>> testSubscriber = new TestSubscriber<>();
         gitHubUserListDataSource.getGitHubUsers(false)

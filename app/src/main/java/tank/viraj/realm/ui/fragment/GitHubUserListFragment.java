@@ -31,7 +31,8 @@ import tank.viraj.realm.ui.activity.GitHubUserProfileActivity;
 /**
  * Created by Viraj Tank, 18-06-2016.
  */
-public class GitHubUserListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class GitHubUserListFragment extends Fragment
+        implements SwipeRefreshLayout.OnRefreshListener {
     @Inject
     GitHubUserPresenter gitHubUserPresenter;
 
@@ -51,7 +52,8 @@ public class GitHubUserListFragment extends Fragment implements SwipeRefreshLayo
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.main_fragment, null);
     }
 

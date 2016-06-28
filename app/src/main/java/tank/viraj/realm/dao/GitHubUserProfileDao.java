@@ -16,13 +16,16 @@ public class GitHubUserProfileDao extends AbstractDao {
 
     public void storeOrUpdateProfile(GitHubUserProfile gitHubUserProfile) {
         Realm realm = Realm.getInstance(realmConfiguration);
-        realm.executeTransaction(realm1 -> GitHubUserProfileDao.this.fromModelToRealm(gitHubUserProfile));
+        realm.executeTransaction(realm1 ->
+                realm1.copyToRealmOrUpdate(fromModelToRealm(gitHubUserProfile)));
         realm.close();
     }
 
     public GitHubUserProfile getProfile(String login) {
         Realm realm = Realm.getInstance(realmConfiguration);
-        GitHubUserProfileRealm gitHubUserProfileRealm = realm.where(GitHubUserProfileRealm.class).equalTo("login", login).findFirst();
+        GitHubUserProfileRealm gitHubUserProfileRealm = realm.where(GitHubUserProfileRealm.class)
+                .equalTo("login", login)
+                .findFirst();
         GitHubUserProfile gitHubUserProfile = fromRealmToModel(gitHubUserProfileRealm);
         realm.close();
         return gitHubUserProfile;

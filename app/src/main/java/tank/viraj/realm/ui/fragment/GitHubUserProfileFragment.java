@@ -28,7 +28,8 @@ import tank.viraj.realm.presenter.GitHubUserProfilePresenter;
 /**
  * Created by Viraj Tank, 18-06-2016.
  */
-public class GitHubUserProfileFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class GitHubUserProfileFragment extends Fragment
+        implements SwipeRefreshLayout.OnRefreshListener {
     @Inject
     GitHubUserProfilePresenter gitHubUserProfilePresenter;
 
@@ -53,7 +54,8 @@ public class GitHubUserProfileFragment extends Fragment implements SwipeRefreshL
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.profile_fragment, null);
     }
 
@@ -61,6 +63,7 @@ public class GitHubUserProfileFragment extends Fragment implements SwipeRefreshL
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
+        setRetainInstance(true);
         ButterKnife.bind(this, view);
 
         // pull to refresh

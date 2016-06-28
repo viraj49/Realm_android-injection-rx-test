@@ -38,7 +38,8 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
-@PrepareForTest({Realm.class, RealmConfiguration.class, RealmQuery.class, RealmResults.class, RealmCore.class})
+@PrepareForTest({Realm.class, RealmConfiguration.class,
+        RealmQuery.class, RealmResults.class, RealmCore.class})
 public class GitHubUserProfileDaoTest {
     @Rule
     public PowerMockRule rule = new PowerMockRule();
@@ -64,8 +65,10 @@ public class GitHubUserProfileDaoTest {
         when(mockRealm.createObject(GitHubUserRealm.class)).thenReturn(new GitHubUserRealm());
 
         // profile1
-        GitHubUserProfileRealm profile1 = new GitHubUserProfileRealm("testLogin1", "testName1", "testEmail1");
-        GitHubUserProfileRealm profile2 = new GitHubUserProfileRealm("testLogin2", "testName2", "testEmail2");
+        GitHubUserProfileRealm profile1 = new GitHubUserProfileRealm("testLogin1",
+                "testName1", "testEmail1");
+        GitHubUserProfileRealm profile2 = new GitHubUserProfileRealm("testLogin2",
+                "testName2", "testEmail2");
         GitHubUserProfileRealm profile3 = null;
 
         RealmQuery<GitHubUserProfileRealm> profileQuery = mockRealmQuery();

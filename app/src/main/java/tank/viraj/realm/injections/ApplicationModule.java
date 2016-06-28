@@ -81,21 +81,24 @@ public class ApplicationModule {
     /* Presenter for GitHubUserProfile */
     @Provides
     @Singleton
-    GitHubUserProfilePresenter provideProfilePresenter(GitHubUserProfileDataSource gitHubUserProfileDataSource) {
+    GitHubUserProfilePresenter provideProfilePresenter(
+            GitHubUserProfileDataSource gitHubUserProfileDataSource) {
         return new GitHubUserProfilePresenter(gitHubUserProfileDataSource);
     }
 
     /* Data source for GitHubUserListDataSource */
     @Provides
     @Singleton
-    GitHubUserListDataSource provideGitHubUserListDataSource(GitHubApiInterface gitHubApiInterface, GitHubUserDao gitHubUserDao) {
+    GitHubUserListDataSource provideGitHubUserListDataSource(GitHubApiInterface gitHubApiInterface,
+                                                             GitHubUserDao gitHubUserDao) {
         return new GitHubUserListDataSource(gitHubApiInterface, gitHubUserDao);
     }
 
     /* Data source for GitHubUserProfileDataSource */
     @Provides
     @Singleton
-    GitHubUserProfileDataSource provideGitHubUserProfileDataSource(GitHubApiInterface gitHubApiInterface, GitHubUserProfileDao gitHubUserProfileDao) {
+    GitHubUserProfileDataSource provideGitHubUserProfileDataSource(
+            GitHubApiInterface gitHubApiInterface, GitHubUserProfileDao gitHubUserProfileDao) {
         return new GitHubUserProfileDataSource(gitHubApiInterface, gitHubUserProfileDao);
     }
 

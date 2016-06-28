@@ -15,7 +15,8 @@ public class GitHubUserListDataSource {
     private GitHubApiInterface gitHubApiInterface;
     private GitHubUserDao gitHubUserDao;
 
-    public GitHubUserListDataSource(GitHubApiInterface gitHubApiInterface, GitHubUserDao gitHubUserDao) {
+    public GitHubUserListDataSource(GitHubApiInterface gitHubApiInterface,
+                                    GitHubUserDao gitHubUserDao) {
         this.gitHubApiInterface = gitHubApiInterface;
         this.gitHubUserDao = gitHubUserDao;
     }

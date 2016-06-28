@@ -40,7 +40,8 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
-@PrepareForTest({Realm.class, RealmConfiguration.class, RealmQuery.class, RealmResults.class, RealmCore.class})
+@PrepareForTest({Realm.class, RealmConfiguration.class,
+        RealmQuery.class, RealmResults.class, RealmCore.class})
 public class GitHubUserDaoTest {
     @Rule
     public PowerMockRule rule = new PowerMockRule();

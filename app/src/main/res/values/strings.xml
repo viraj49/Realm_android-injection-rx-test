@@ -11,4 +11,5 @@
     <string name="github_user_key">gitHubUserKey</string>
     <string name="clear_user_list">Cleared user list from Realm</string>
     <string name="clear_user_profile">Cleared Profile data from Realm</string>
+    <string name="profile_fragment">profile_fragment</string>
 </resources>

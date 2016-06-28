@@ -30,7 +30,8 @@ public class GitHubUserProfileDataSourceTest {
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
-        gitHubUserProfileDataSource = new GitHubUserProfileDataSource(gitHubApiInterface, gitHubUserProfileDao);
+        gitHubUserProfileDataSource = new GitHubUserProfileDataSource(gitHubApiInterface,
+                gitHubUserProfileDao);
     }
 
     /* get getGitHubUserProfile from Realm */
@@ -39,7 +40,8 @@ public class GitHubUserProfileDataSourceTest {
         GitHubUserProfile gitHubUserProfile = new GitHubUserProfile("testLogin", "testName", "testEmail");
 
         Mockito.when(gitHubUserProfileDao.getProfile("testLogin")).thenReturn(gitHubUserProfile);
-        Mockito.when(gitHubApiInterface.getGitHubUserProfile("testLogin")).thenReturn(Observable.just(gitHubUserProfile));
+        Mockito.when(gitHubApiInterface.getGitHubUserProfile("testLogin"))
+                .thenReturn(Observable.just(gitHubUserProfile));
 
         TestSubscriber<GitHubUserProfile> testSubscriber = new TestSubscriber<>();
         gitHubUserProfileDataSource.getGitHubUserProfile("testLogin", false)
@@ -54,9 +56,11 @@ public class GitHubUserProfileDataSourceTest {
     /* get getGitHubUserProfile from Retrofit2 and update on Realm */
     @Test
     public void getGitHubUsersFromRetrofitTest() {
-        GitHubUserProfile gitHubUserProfile = new GitHubUserProfile("testLogin", "testName", "testEmail");
+        GitHubUserProfile gitHubUserProfile = new GitHubUserProfile("testLogin",
+                "testName", "testEmail");
 
-        Mockito.when(gitHubApiInterface.getGitHubUserProfile("testLogin")).thenReturn(Observable.just(gitHubUserProfile));
+        Mockito.when(gitHubApiInterface.getGitHubUserProfile("testLogin"))
+                .thenReturn(Observable.just(gitHubUserProfile));
 
         TestSubscriber<GitHubUserProfile> testSubscriber = new TestSubscriber<>();
         gitHubUserProfileDataSource.getGitHubUserProfile("testLogin", true)

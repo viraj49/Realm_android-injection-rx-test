@@ -23,7 +23,8 @@ public class GitHubUserProfileTest {
 
     @Test
     public void createObjectTest() {
-        GitHubUserProfile gitHubUserProfile = new GitHubUserProfile("testLogin", "testName", "testEmail");
+        GitHubUserProfile gitHubUserProfile = new GitHubUserProfile("testLogin",
+                "testName", "testEmail");
 
         Assert.assertEquals("testLogin", gitHubUserProfile.getLogin());
         Assert.assertEquals("testName", gitHubUserProfile.getName());
@@ -32,7 +33,8 @@ public class GitHubUserProfileTest {
 
     @Test
     public void RealmToModelObjectTest() {
-        GitHubUserProfileRealm gitHubUserProfileRealm = new GitHubUserProfileRealm("testLogin", "testName", "testEmail");
+        GitHubUserProfileRealm gitHubUserProfileRealm = new GitHubUserProfileRealm("testLogin",
+                "testName", "testEmail");
         GitHubUserProfile gitHubUserProfile = new GitHubUserProfile(gitHubUserProfileRealm);
 
         Assert.assertEquals("testLogin", gitHubUserProfile.getLogin());

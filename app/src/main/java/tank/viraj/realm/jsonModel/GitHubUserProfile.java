@@ -1,6 +1,5 @@
 package tank.viraj.realm.jsonModel;
 
-import io.realm.RealmModel;
 import lombok.Getter;
 import tank.viraj.realm.realmModel.GitHubUserProfileRealm;
 
@@ -9,7 +8,7 @@ import tank.viraj.realm.realmModel.GitHubUserProfileRealm;
  */
 
 @Getter
-public class GitHubUserProfile implements RealmModel {
+public class GitHubUserProfile {
     private String login;
     private String name;
     private String email;
