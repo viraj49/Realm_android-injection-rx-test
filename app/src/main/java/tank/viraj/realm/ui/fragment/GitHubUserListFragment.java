@@ -124,8 +124,8 @@ public class GitHubUserListFragment extends Fragment
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         gitHubUserPresenter.unBind();
+        super.onDestroyView();
     }
 
     @Override

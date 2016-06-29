@@ -107,8 +107,8 @@ public class GitHubUserProfileFragment extends Fragment
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         gitHubUserProfilePresenter.unBind();
+        super.onDestroyView();
     }
 
     public void setGitHubUser(GitHubUser gitHubUser) {
