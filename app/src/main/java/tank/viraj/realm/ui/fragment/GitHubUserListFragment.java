@@ -130,8 +130,8 @@ public class GitHubUserListFragment extends Fragment
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         mainAdapter.reset();
+        super.onDestroy();
     }
 
     public void setDataList(List<GitHubUser> gitHubUserList) {
