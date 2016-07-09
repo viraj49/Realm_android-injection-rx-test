@@ -19,12 +19,15 @@ public class GitHubUserProfilePresenter {
     private GitHubApiInterface gitHubApiInterface;
     private CompositeSubscription compositeSubscription;
     private RxSchedulerConfiguration rxSchedulerConfiguration;
+    private InternetConnection internetConnection;
     private Realm realm;
 
     public GitHubUserProfilePresenter(GitHubApiInterface gitHubApiInterface,
-                                      RxSchedulerConfiguration rxSchedulerConfiguration) {
+                                      RxSchedulerConfiguration rxSchedulerConfiguration,
+                                      InternetConnection internetConnection) {
         this.gitHubApiInterface = gitHubApiInterface;
         this.rxSchedulerConfiguration = rxSchedulerConfiguration;
+        this.internetConnection = internetConnection;
     }
 
     public void loadGitHubUserProfile(String login, boolean isForced) {
@@ -50,7 +53,7 @@ public class GitHubUserProfilePresenter {
     }
 
     private Observable<Boolean> getGitHubUserProfileFromRetrofit(String login) {
-        return new InternetConnection().isInternetOn(view.getActivity())
+        return internetConnection.isInternetOn(view.getActivity())
                 .filter(connectionStatus -> connectionStatus)
                 .switchMap(connectionStatus -> gitHubApiInterface.getGitHubUserProfile(login))
                 .subscribeOn(rxSchedulerConfiguration.getComputationThread())

@@ -17,12 +17,14 @@ public class GitHubUserListDataSource {
     private Context context;
     private GitHubApiInterface gitHubApiInterface;
     private GitHubUserDao gitHubUserDao;
+    private InternetConnection internetConnection;
 
     public GitHubUserListDataSource(Context context, GitHubApiInterface gitHubApiInterface,
-                                    GitHubUserDao gitHubUserDao) {
+                                    GitHubUserDao gitHubUserDao, InternetConnection internetConnection) {
         this.context = context;
         this.gitHubApiInterface = gitHubApiInterface;
         this.gitHubUserDao = gitHubUserDao;
+        this.internetConnection = internetConnection;
     }
 
     public Observable<List<GitHubUser>> getGitHubUsers(boolean isForced) {
@@ -38,7 +40,7 @@ public class GitHubUserListDataSource {
     }
 
     private Observable<List<GitHubUser>> getGitHubUsersFromRetrofit() {
-        return new InternetConnection().isInternetOn(context)
+        return internetConnection.isInternetOn(context)
                 .switchMap(connectionStatus -> connectionStatus ? gitHubApiInterface.getGitHubUsersList()
                         .map(gitHubUserList -> {
                             gitHubUserDao.storeOrUpdateGitHubUserList(gitHubUserList);

@@ -15,13 +15,16 @@ public class GitHubUserProfileDataSource {
     private Context context;
     private GitHubApiInterface gitHubApiInterface;
     private GitHubUserProfileDao gitHubUserProfileDao;
+    private InternetConnection internetConnection;
 
     public GitHubUserProfileDataSource(Context context,
                                        GitHubApiInterface gitHubApiInterface,
-                                       GitHubUserProfileDao gitHubUserProfileDao) {
+                                       GitHubUserProfileDao gitHubUserProfileDao,
+                                       InternetConnection internetConnection) {
         this.context = context;
         this.gitHubApiInterface = gitHubApiInterface;
         this.gitHubUserProfileDao = gitHubUserProfileDao;
+        this.internetConnection = internetConnection;
     }
 
     public Observable<GitHubUserProfile> getGitHubUserProfile(String login, boolean isForced) {
@@ -39,7 +42,7 @@ public class GitHubUserProfileDataSource {
     }
 
     private Observable<GitHubUserProfile> getGitHubUserProfileFromRetrofit(String login) {
-        return new InternetConnection().isInternetOn(context)
+        return internetConnection.isInternetOn(context)
                 .switchMap(connectionStatus -> connectionStatus ?
                         gitHubApiInterface.getGitHubUserProfile(login)
                                 .map(profile -> {

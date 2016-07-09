@@ -21,12 +21,15 @@ public class GitHubUserListPresenter {
     private CompositeSubscription compositeSubscription;
     private RxSchedulerConfiguration rxSchedulerConfiguration;
     private GitHubApiInterface gitHubApiInterface;
+    private InternetConnection internetConnection;
     private Realm realm;
 
     public GitHubUserListPresenter(GitHubApiInterface gitHubApiInterface,
-                                   RxSchedulerConfiguration rxSchedulerConfiguration) {
+                                   RxSchedulerConfiguration rxSchedulerConfiguration,
+                                   InternetConnection internetConnection) {
         this.gitHubApiInterface = gitHubApiInterface;
         this.rxSchedulerConfiguration = rxSchedulerConfiguration;
+        this.internetConnection = internetConnection;
     }
 
     public void loadGitHubUserList(boolean isForced) {
@@ -68,7 +71,7 @@ public class GitHubUserListPresenter {
     }
 
     private Observable<Integer> getGitHubUsersFromRetrofit() {
-        return new InternetConnection().isInternetOn(view.getActivity())
+        return internetConnection.isInternetOn(view.getActivity())
                 .filter(connectionStatus -> connectionStatus)
                 .switchMap(connectionStatus -> gitHubApiInterface.getGitHubUsersList())
                 .subscribeOn(rxSchedulerConfiguration.getComputationThread())

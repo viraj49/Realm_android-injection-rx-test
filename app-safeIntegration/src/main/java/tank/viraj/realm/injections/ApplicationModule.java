@@ -18,6 +18,7 @@ import tank.viraj.realm.dataSource.GitHubUserProfileDataSource;
 import tank.viraj.realm.presenter.GitHubUserPresenter;
 import tank.viraj.realm.presenter.GitHubUserProfilePresenter;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
+import tank.viraj.realm.util.InternetConnection;
 import tank.viraj.realm.util.RxSchedulerConfiguration;
 
 /**
@@ -63,17 +64,19 @@ public class ApplicationModule {
     /* Data source for GitHubUserListDataSource */
     @Provides
     GitHubUserListDataSource provideGitHubUserListDataSource(GitHubApiInterface gitHubApiInterface,
-                                                             GitHubUserDao gitHubUserDao) {
+                                                             GitHubUserDao gitHubUserDao,
+                                                             InternetConnection internetConnection) {
         return new GitHubUserListDataSource(application.getApplicationContext(),
-                gitHubApiInterface, gitHubUserDao);
+                gitHubApiInterface, gitHubUserDao, internetConnection);
     }
 
     /* Data source for GitHubUserProfileDataSource */
     @Provides
     GitHubUserProfileDataSource provideGitHubUserProfileDataSource(
-            GitHubApiInterface gitHubApiInterface, GitHubUserProfileDao gitHubUserProfileDao) {
+            GitHubApiInterface gitHubApiInterface, GitHubUserProfileDao gitHubUserProfileDao,
+            InternetConnection internetConnection) {
         return new GitHubUserProfileDataSource(application.getApplicationContext(),
-                gitHubApiInterface, gitHubUserProfileDao);
+                gitHubApiInterface, gitHubUserProfileDao, internetConnection);
     }
 
     /* OkHttpclient for retrofit2 */
@@ -108,5 +111,12 @@ public class ApplicationModule {
     @Singleton
     RxSchedulerConfiguration provideRxSchedulerConfiguration() {
         return new RxSchedulerConfiguration();
+    }
+
+    /* InternetConnection utility */
+    @Provides
+    @Singleton
+    InternetConnection provideInternetConnection() {
+        return new InternetConnection();
     }
 }

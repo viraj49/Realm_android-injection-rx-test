@@ -1,10 +1,13 @@
 package tank.viraj.realm.dataSource;
 
+import android.content.Context;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -13,11 +16,10 @@ import java.util.List;
 
 import rx.Observable;
 import rx.observers.TestSubscriber;
-import rx.schedulers.Schedulers;
 import tank.viraj.realm.dao.GitHubUserDao;
 import tank.viraj.realm.model.GitHubUser;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
-import tank.viraj.realm.util.RxSchedulerConfiguration;
+import tank.viraj.realm.util.InternetConnection;
 
 import static org.mockito.Mockito.when;
 
@@ -27,19 +29,21 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class GitHubUserListDataSourceTest {
     @Mock
+    Context context;
+    @Mock
+    InternetConnection internetConnection;
+    @Mock
     GitHubApiInterface gitHubApiInterface;
     @Mock
     GitHubUserDao gitHubUserDao;
-    @Mock
-    RxSchedulerConfiguration rxSchedulerConfiguration;
 
     private GitHubUserListDataSource gitHubUserListDataSource;
 
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
-        gitHubUserListDataSource = new GitHubUserListDataSource(gitHubApiInterface,
-                gitHubUserDao, rxSchedulerConfiguration);
+        gitHubUserListDataSource = new GitHubUserListDataSource(context, gitHubApiInterface,
+                gitHubUserDao, internetConnection);
 
         GitHubUser p1 = new GitHubUser(1, "test1", "testName1");
         GitHubUser p2 = new GitHubUser(2, "test2", "testName2");
@@ -48,14 +52,13 @@ public class GitHubUserListDataSourceTest {
         when(gitHubUserDao.getGitHubUserList()).thenReturn(gitHubUserList);
         when(gitHubApiInterface.getGitHubUsersList())
                 .thenReturn(Observable.just(gitHubUserList));
-
-        when(rxSchedulerConfiguration.getComputationThread()).thenReturn(Schedulers.immediate());
-        when(rxSchedulerConfiguration.getComputationThread()).thenReturn(Schedulers.immediate());
     }
 
     /* get getGitHubUsersList list from Realm */
     @Test
     public void getGitHubUsersFromDaoTest() {
+        Mockito.when(internetConnection.isInternetOn(context))
+                .thenReturn(Observable.just(true));
         TestSubscriber<List<GitHubUser>> testSubscriber = new TestSubscriber<>();
         gitHubUserListDataSource.getGitHubUsers(false)
                 .subscribe(testSubscriber);
@@ -73,6 +76,8 @@ public class GitHubUserListDataSourceTest {
     /* get getGitHubUsersList list from Retrofit2 and update on Realm */
     @Test
     public void getGitHubUsersFromRetrofitTest() {
+        Mockito.when(internetConnection.isInternetOn(context))
+                .thenReturn(Observable.just(true));
         TestSubscriber<List<GitHubUser>> testSubscriber = new TestSubscriber<>();
         gitHubUserListDataSource.getGitHubUsers(true)
                 .subscribe(testSubscriber);

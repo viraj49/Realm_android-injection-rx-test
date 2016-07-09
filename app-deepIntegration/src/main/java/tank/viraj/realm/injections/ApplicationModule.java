@@ -14,6 +14,7 @@ import tank.viraj.realm.adapter.MainAdapter;
 import tank.viraj.realm.presenter.GitHubUserListPresenter;
 import tank.viraj.realm.presenter.GitHubUserProfilePresenter;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
+import tank.viraj.realm.util.InternetConnection;
 import tank.viraj.realm.util.RxSchedulerConfiguration;
 
 /**
@@ -30,6 +31,11 @@ public class ApplicationModule {
     }
 
     @Provides
+    InternetConnection provideInternetConnection() {
+        return new InternetConnection();
+    }
+
+    @Provides
     @Singleton
     RxSchedulerConfiguration provideRxSchedulerConfiguration() {
         return new RxSchedulerConfiguration();
@@ -37,14 +43,16 @@ public class ApplicationModule {
 
     @Provides
     GitHubUserListPresenter provideGitHubUserPresenter(GitHubApiInterface gitHubApiInterface,
-                                                       RxSchedulerConfiguration rxSchedulerConfiguration) {
-        return new GitHubUserListPresenter(gitHubApiInterface, rxSchedulerConfiguration);
+                                                       RxSchedulerConfiguration rxSchedulerConfiguration,
+                                                       InternetConnection internetConnection) {
+        return new GitHubUserListPresenter(gitHubApiInterface, rxSchedulerConfiguration, internetConnection);
     }
 
     @Provides
     GitHubUserProfilePresenter provideGitHubUserProfilePresenter(GitHubApiInterface gitHubApiInterface,
-                                                                 RxSchedulerConfiguration rxSchedulerConfiguration) {
-        return new GitHubUserProfilePresenter(gitHubApiInterface, rxSchedulerConfiguration);
+                                                                 RxSchedulerConfiguration rxSchedulerConfiguration,
+                                                                 InternetConnection internetConnection) {
+        return new GitHubUserProfilePresenter(gitHubApiInterface, rxSchedulerConfiguration, internetConnection);
     }
 
     @Provides
