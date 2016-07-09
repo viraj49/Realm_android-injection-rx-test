@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/refresh_profile"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/profile_icon"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="@string/profile_icon"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@+id/profile_icon"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center|start" />
+
+            <TextView
+                android:id="@+id/profile_email"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@+id/profile_name"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:gravity="center|start" />
+
+            <EditText
+                android:id="@+id/edit_id"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@+id/profile_email"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:gravity="center|start"
+                android:hint="@string/enter_id"
+                android:inputType="number" />
+
+            <Button
+                android:id="@+id/button_id"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_below="@+id/edit_id"
+                android:layout_centerHorizontal="true"
+                android:text="@string/edit_id"
+                android:textAlignment="center" />
+
+            <EditText
+                android:id="@+id/edit_name"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@+id/button_id"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:gravity="center|start"
+                android:hint="@string/enter_name"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/button_name"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_below="@+id/edit_name"
+                android:layout_centerHorizontal="true"
+                android:text="@string/edit_name"
+                android:textAlignment="center" />
+
+        </RelativeLayout>
+    </ScrollView>
+</android.support.v4.widget.SwipeRefreshLayout>

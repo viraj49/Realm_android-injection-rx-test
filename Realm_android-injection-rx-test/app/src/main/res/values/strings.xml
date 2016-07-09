@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Realm + {injection, rx, test}</string>
+    <string name="user_list">User List</string>
+    <string name="user_profile">User Profile</string>
+    <string name="user_icon">User icon</string>
+    <string name="profile_icon">Profile icon</string>
+    <string name="clear">Clear</string>
+    <string name="userId">userId = %d</string>
+    <string name="name"><b>Name = </b></string>
+    <string name="email"><b>Email = </b></string>
+    <string name="github_user_key">gitHubUserKey</string>
+    <string name="clear_user_list">Cleared user list from Realm</string>
+    <string name="clear_user_profile">Cleared Profile data from Realm</string>
+    <string name="profile_fragment">profile_fragment</string>
+</resources>
