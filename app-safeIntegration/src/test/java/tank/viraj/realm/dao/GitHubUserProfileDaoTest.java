@@ -21,7 +21,7 @@ import io.realm.RealmResults;
 import io.realm.internal.RealmCore;
 import tank.viraj.realm.BuildConfig;
 import tank.viraj.realm.MainApplicationTest;
-import tank.viraj.realm.model.GitHubUserProfile;
+import tank.viraj.realm.jsonModel.GitHubUserProfile;
 import tank.viraj.realm.realmModel.GitHubUserProfileRealm;
 import tank.viraj.realm.realmModel.GitHubUserRealm;
 

@@ -16,10 +16,12 @@ import java.util.List;
 
 import rx.Observable;
 import rx.observers.TestSubscriber;
+import rx.schedulers.Schedulers;
 import tank.viraj.realm.dao.GitHubUserDao;
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
 import tank.viraj.realm.util.InternetConnection;
+import tank.viraj.realm.util.RxSchedulerConfiguration;
 
 import static org.mockito.Mockito.when;
 
@@ -36,6 +38,8 @@ public class GitHubUserListDataSourceTest {
     GitHubApiInterface gitHubApiInterface;
     @Mock
     GitHubUserDao gitHubUserDao;
+    @Mock
+    RxSchedulerConfiguration rxSchedulerConfiguration;
 
     private GitHubUserListDataSource gitHubUserListDataSource;
 
@@ -43,7 +47,7 @@ public class GitHubUserListDataSourceTest {
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
         gitHubUserListDataSource = new GitHubUserListDataSource(context, gitHubApiInterface,
-                gitHubUserDao, internetConnection);
+                gitHubUserDao, internetConnection, rxSchedulerConfiguration);
 
         GitHubUser p1 = new GitHubUser(1, "test1", "testName1");
         GitHubUser p2 = new GitHubUser(2, "test2", "testName2");
@@ -52,6 +56,8 @@ public class GitHubUserListDataSourceTest {
         when(gitHubUserDao.getGitHubUserList()).thenReturn(gitHubUserList);
         when(gitHubApiInterface.getGitHubUsersList())
                 .thenReturn(Observable.just(gitHubUserList));
+        when(rxSchedulerConfiguration.getComputationThread()).thenReturn(Schedulers.immediate());
+        when(rxSchedulerConfiguration.getMainThread()).thenReturn(Schedulers.immediate());
     }
 
     /* get getGitHubUsersList list from Realm */
@@ -60,8 +66,9 @@ public class GitHubUserListDataSourceTest {
         Mockito.when(internetConnection.isInternetOn(context))
                 .thenReturn(Observable.just(true));
         TestSubscriber<List<GitHubUser>> testSubscriber = new TestSubscriber<>();
-        gitHubUserListDataSource.getGitHubUsers(false)
+        gitHubUserListDataSource.getGitHubUserListHotSubscription()
                 .subscribe(testSubscriber);
+        gitHubUserListDataSource.getGitHubUsers(false);
 
         Assert.assertEquals(1, testSubscriber.getOnNextEvents().size());
         Assert.assertEquals(2, testSubscriber.getOnNextEvents().get(0).size());
@@ -79,8 +86,9 @@ public class GitHubUserListDataSourceTest {
         Mockito.when(internetConnection.isInternetOn(context))
                 .thenReturn(Observable.just(true));
         TestSubscriber<List<GitHubUser>> testSubscriber = new TestSubscriber<>();
-        gitHubUserListDataSource.getGitHubUsers(true)
+        gitHubUserListDataSource.getGitHubUserListHotSubscription()
                 .subscribe(testSubscriber);
+        gitHubUserListDataSource.getGitHubUsers(true);
 
         Assert.assertEquals(1, testSubscriber.getOnNextEvents().size());
         Assert.assertEquals(2, testSubscriber.getOnNextEvents().get(0).size());

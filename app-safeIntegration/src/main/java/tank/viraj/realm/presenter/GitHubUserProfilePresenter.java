@@ -1,7 +1,7 @@
 package tank.viraj.realm.presenter;
 
 
-import rx.subscriptions.CompositeSubscription;
+import rx.Subscription;
 import tank.viraj.realm.dataSource.GitHubUserProfileDataSource;
 import tank.viraj.realm.ui.fragment.GitHubUserProfileFragment;
 import tank.viraj.realm.util.RxSchedulerConfiguration;
@@ -12,8 +12,8 @@ import tank.viraj.realm.util.RxSchedulerConfiguration;
 public class GitHubUserProfilePresenter {
     private GitHubUserProfileFragment view;
     private GitHubUserProfileDataSource gitHubUserProfileDataSource;
-    private CompositeSubscription compositeSubscription;
     private RxSchedulerConfiguration rxSchedulerConfiguration;
+    private Subscription subscription;
 
     public GitHubUserProfilePresenter(GitHubUserProfileDataSource gitHubUserProfileDataSource,
                                       RxSchedulerConfiguration rxSchedulerConfiguration) {
@@ -22,35 +22,40 @@ public class GitHubUserProfilePresenter {
     }
 
     public void loadGitHubUserProfile(String login, boolean isForced) {
-        compositeSubscription.add(
-                gitHubUserProfileDataSource.getGitHubUserProfile(login, isForced)
-                        .doOnSubscribe(() -> view.startRefreshAnimation())
-                        .subscribeOn(rxSchedulerConfiguration.getComputationThread())
-                        .observeOn(rxSchedulerConfiguration.getMainThread())
-                        .subscribe(gitHubUserProfile -> {
-                            view.setData(gitHubUserProfile);
-                            view.stopRefreshAnimation();
-                        }, throwable -> {
-                            view.stopRefreshAnimation();
-                        })
-        );
+        gitHubUserProfileDataSource.getGitHubUserProfile(login, isForced);
     }
 
     public void clearGitHubUserProfileFromRealm() {
         gitHubUserProfileDataSource.clearRealmData();
     }
 
-    public void bind(GitHubUserProfileFragment gitHubUserProfileFragment) {
+    public void bind(GitHubUserProfileFragment gitHubUserProfileFragment,
+                     String login,
+                     boolean isForced) {
         this.view = gitHubUserProfileFragment;
-        this.compositeSubscription = new CompositeSubscription();
+        view.startRefreshAnimation();
+
+        if (subscription == null || subscription.isUnsubscribed()) {
+            subscription = gitHubUserProfileDataSource.getGitHubUserListHotSubscription()
+                    .subscribeOn(rxSchedulerConfiguration.getComputationThread())
+                    .observeOn(rxSchedulerConfiguration.getMainThread())
+                    .subscribe(gitHubUserProfile -> {
+                        view.setData(gitHubUserProfile);
+                        view.stopRefreshAnimation();
+                    }, error -> view.stopRefreshAnimation());
+        }
+
+        loadGitHubUserProfile(login, isForced);
     }
 
     public void unBind() {
-        if (compositeSubscription != null && !compositeSubscription.isUnsubscribed()) {
-            compositeSubscription.unsubscribe();
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
         }
-
-        view.stopRefreshAnimation();
         this.view = null;
+    }
+
+    public void unSubscribe() {
+        gitHubUserProfileDataSource.unSubscribe();
     }
 }

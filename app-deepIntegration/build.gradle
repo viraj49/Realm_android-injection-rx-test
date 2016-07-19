@@ -59,8 +59,8 @@ dependencies {
     apt 'com.google.dagger:dagger-compiler:2.4'
 
     /* butterKnife2 - for annotations */
-    compile 'com.jakewharton:butterknife:8.1.0'
-    apt 'com.jakewharton:butterknife-compiler:8.1.0'
+    compile 'com.jakewharton:butterknife:8.2.1'
+    apt 'com.jakewharton:butterknife-compiler:8.2.1'
 
     /* picasso - for loading and caching images */
     compile 'com.squareup.picasso:picasso:2.5.2'

@@ -21,10 +21,11 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import tank.viraj.realm.MainApplication;
 import tank.viraj.realm.R;
 import tank.viraj.realm.adapter.MainAdapter;
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
 import tank.viraj.realm.presenter.GitHubUserPresenter;
 import tank.viraj.realm.ui.activity.GitHubUserProfileActivity;
 
@@ -45,23 +46,26 @@ public class GitHubUserListFragment extends Fragment
     @BindView(R.id.refresh_list)
     SwipeRefreshLayout pullToRefreshLayout;
 
+    private Unbinder unbinder;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         ((MainApplication) getActivity().getApplication()).getApplicationComponent().inject(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.main_fragment, null);
+        return inflater.inflate(R.layout.main_fragment, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         mainAdapter.setOnItemClickListener((v, gitHubUser) -> {
             Intent switchToUserProfile = new Intent(getActivity(), GitHubUserProfileActivity.class);
@@ -92,8 +96,7 @@ public class GitHubUserListFragment extends Fragment
         });
 
         /* bind the view and load data from Realm or Retrofit2 */
-        gitHubUserPresenter.bind(this);
-        gitHubUserPresenter.loadGitHubUserList(false);
+        gitHubUserPresenter.bind(this, false);
     }
 
     @Override
@@ -124,12 +127,14 @@ public class GitHubUserListFragment extends Fragment
 
     @Override
     public void onDestroyView() {
+        unbinder.unbind();
         gitHubUserPresenter.unBind();
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
+        gitHubUserPresenter.unSubscribe();
         mainAdapter.reset();
         super.onDestroy();
     }

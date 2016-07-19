@@ -6,3 +6,6 @@
 .DS_Store
 /build
 /captures
+.idea/copyright/profiles_settings.xml
+.idea/dictionaries/virajtank.xml
+.idea/modules.xml

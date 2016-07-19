@@ -1,7 +1,7 @@
 package tank.viraj.realm.presenter;
 
 
-import rx.subscriptions.CompositeSubscription;
+import rx.Subscription;
 import tank.viraj.realm.dataSource.GitHubUserListDataSource;
 import tank.viraj.realm.ui.fragment.GitHubUserListFragment;
 import tank.viraj.realm.util.RxSchedulerConfiguration;
@@ -12,45 +12,47 @@ import tank.viraj.realm.util.RxSchedulerConfiguration;
 public class GitHubUserPresenter {
     private GitHubUserListFragment view;
     private GitHubUserListDataSource gitHubUserListDataSource;
-    private CompositeSubscription compositeSubscription;
+    private Subscription subscription;
     private RxSchedulerConfiguration rxSchedulerConfiguration;
 
-    public GitHubUserPresenter(GitHubUserListDataSource gitHubUserListDataSource) {
+    public GitHubUserPresenter(GitHubUserListDataSource gitHubUserListDataSource,
+                               RxSchedulerConfiguration rxSchedulerConfiguration) {
         this.gitHubUserListDataSource = gitHubUserListDataSource;
-        this.rxSchedulerConfiguration = new RxSchedulerConfiguration();
+        this.rxSchedulerConfiguration = rxSchedulerConfiguration;
     }
 
     public void loadGitHubUserList(boolean isForced) {
-        compositeSubscription.add(
-                gitHubUserListDataSource.getGitHubUsers(isForced)
-                        .doOnSubscribe(() -> view.startRefreshAnimation())
-                        .subscribeOn(rxSchedulerConfiguration.getComputationThread())
-                        .observeOn(rxSchedulerConfiguration.getMainThread())
-                        .subscribe(gitHubUserList -> {
-                            view.setDataList(gitHubUserList);
-                            view.stopRefreshAnimation();
-                        }, throwable -> {
-                            view.stopRefreshAnimation();
-                        })
-        );
+        gitHubUserListDataSource.getGitHubUsers(isForced);
     }
 
     public void clearGitHubUserListFromRealm() {
         gitHubUserListDataSource.clearRealmData();
     }
 
-    public void bind(GitHubUserListFragment gitHubUserListFragment) {
+    public void bind(GitHubUserListFragment gitHubUserListFragment, boolean isForced) {
         this.view = gitHubUserListFragment;
-        this.compositeSubscription = new CompositeSubscription();
+        view.startRefreshAnimation();
+
+        if (subscription == null || subscription.isUnsubscribed()) {
+            subscription = gitHubUserListDataSource.getGitHubUserListHotSubscription()
+                    .subscribeOn(rxSchedulerConfiguration.getComputationThread())
+                    .observeOn(rxSchedulerConfiguration.getMainThread())
+                    .subscribe(gitHubUserList -> {
+                        view.setDataList(gitHubUserList);
+                        view.stopRefreshAnimation();
+                    }, error -> view.stopRefreshAnimation());
+        }
+        loadGitHubUserList(isForced);
     }
 
     public void unBind() {
-        if (compositeSubscription != null && !compositeSubscription.isUnsubscribed()) {
-            compositeSubscription.unsubscribe();
-            compositeSubscription = null;
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
         }
-
-        view.stopRefreshAnimation();
         this.view = null;
+    }
+
+    public void unSubscribe() {
+        gitHubUserListDataSource.unSubscribeHotSubscription();
     }
 }

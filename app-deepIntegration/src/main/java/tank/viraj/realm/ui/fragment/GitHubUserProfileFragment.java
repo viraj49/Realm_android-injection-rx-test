@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import tank.viraj.realm.MainApplication;
 import tank.viraj.realm.R;
 import tank.viraj.realm.model.GitHubUserProfile;
@@ -58,17 +59,19 @@ public class GitHubUserProfileFragment extends Fragment
 
     private String login;
     private String avatarUrl;
+    private Unbinder unbinder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         ((MainApplication) getActivity().getApplication()).getApplicationComponent().inject(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.profile_fragment, null);
+        return inflater.inflate(R.layout.profile_fragment, container, false);
     }
 
     @Override
@@ -76,7 +79,7 @@ public class GitHubUserProfileFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         // pull to refresh
         pullToRefreshLayout.setOnRefreshListener(this);
@@ -97,8 +100,7 @@ public class GitHubUserProfileFragment extends Fragment
         });
 
         /* bind the view and load data from Realm */
-        gitHubUserProfilePresenter.bind(this, login);
-        gitHubUserProfilePresenter.loadGitHubUserProfile(login, false);
+        gitHubUserProfilePresenter.bind(this, login, false);
     }
 
     @Override
@@ -122,8 +124,15 @@ public class GitHubUserProfileFragment extends Fragment
 
     @Override
     public void onDestroyView() {
+        unbinder.unbind();
         gitHubUserProfilePresenter.unBind();
         super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        gitHubUserProfilePresenter.unSubscribe();
+        super.onDestroy();
     }
 
     public void setGitHubUserData(String login, String avatarUrl) {

@@ -6,8 +6,8 @@ import java.util.List;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import rx.Observable;
-import tank.viraj.realm.model.GitHubUser;
-import tank.viraj.realm.model.GitHubUserProfile;
+import tank.viraj.realm.jsonModel.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUserProfile;
 
 /**
  * Created by Viraj Tank, 18-06-2016.

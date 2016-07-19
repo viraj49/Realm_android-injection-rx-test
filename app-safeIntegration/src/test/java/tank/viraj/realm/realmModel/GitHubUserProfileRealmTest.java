@@ -8,7 +8,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import tank.viraj.realm.model.GitHubUserProfile;
+import tank.viraj.realm.jsonModel.GitHubUserProfile;
+
 
 /**
  * Created by Viraj Tank, 20/06/16.

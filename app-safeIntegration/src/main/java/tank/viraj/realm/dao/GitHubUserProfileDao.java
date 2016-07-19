@@ -1,7 +1,7 @@
 package tank.viraj.realm.dao;
 
 import io.realm.Realm;
-import tank.viraj.realm.model.GitHubUserProfile;
+import tank.viraj.realm.jsonModel.GitHubUserProfile;
 import tank.viraj.realm.realmModel.GitHubUserProfileRealm;
 
 /**

@@ -25,7 +25,7 @@ import io.realm.RealmResults;
 import io.realm.internal.RealmCore;
 import tank.viraj.realm.BuildConfig;
 import tank.viraj.realm.MainApplicationTest;
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
 import tank.viraj.realm.realmModel.GitHubUserRealm;
 
 import static org.mockito.Matchers.any;

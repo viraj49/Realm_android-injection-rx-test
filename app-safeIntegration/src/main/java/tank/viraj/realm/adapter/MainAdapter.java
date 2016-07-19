@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tank.viraj.realm.R;
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
 
 /**
  * Adapter for RecyclerView

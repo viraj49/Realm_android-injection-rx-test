@@ -6,7 +6,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
+
 
 /**
  * Created by Viraj Tank, 20/06/16.

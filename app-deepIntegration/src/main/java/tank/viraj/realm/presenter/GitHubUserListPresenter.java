@@ -1,16 +1,11 @@
 package tank.viraj.realm.presenter;
 
-
-import java.util.List;
-
 import io.realm.Realm;
 import io.realm.RealmResults;
-import rx.Observable;
-import rx.subscriptions.CompositeSubscription;
+import rx.Subscription;
+import tank.viraj.realm.dataSource.GitHubUserListDataSource;
 import tank.viraj.realm.model.GitHubUser;
-import tank.viraj.realm.retrofit.GitHubApiInterface;
 import tank.viraj.realm.ui.fragment.GitHubUserListFragment;
-import tank.viraj.realm.util.InternetConnection;
 import tank.viraj.realm.util.RxSchedulerConfiguration;
 
 /**
@@ -18,85 +13,69 @@ import tank.viraj.realm.util.RxSchedulerConfiguration;
  */
 public class GitHubUserListPresenter {
     private GitHubUserListFragment view;
-    private CompositeSubscription compositeSubscription;
+    private Subscription subscription;
+    private Subscription gitHubUserListHotSubscription;
     private RxSchedulerConfiguration rxSchedulerConfiguration;
-    private GitHubApiInterface gitHubApiInterface;
-    private InternetConnection internetConnection;
     private Realm realm;
+    private GitHubUserListDataSource gitHubUserListDataSource;
 
-    public GitHubUserListPresenter(GitHubApiInterface gitHubApiInterface,
-                                   RxSchedulerConfiguration rxSchedulerConfiguration,
-                                   InternetConnection internetConnection) {
-        this.gitHubApiInterface = gitHubApiInterface;
+    public GitHubUserListPresenter(RxSchedulerConfiguration rxSchedulerConfiguration,
+                                   GitHubUserListDataSource gitHubUserListDataSource) {
         this.rxSchedulerConfiguration = rxSchedulerConfiguration;
-        this.internetConnection = internetConnection;
+        this.gitHubUserListDataSource = gitHubUserListDataSource;
     }
 
     public void loadGitHubUserList(boolean isForced) {
-        compositeSubscription.add(Observable
-                .concat(getGitHubUsersFromRealm(isForced), getGitHubUsersFromRetrofit())
-                .first(gitHubUserListSize -> gitHubUserListSize > 0)
-                .subscribeOn(rxSchedulerConfiguration.getComputationThread())
-                .observeOn(rxSchedulerConfiguration.getMainThread())
-                .subscribe(aBoolean -> {
-                    view.stopRefreshAnimation();
-                }, throwable -> {
-                    view.stopRefreshAnimation();
-                }));
+        if (gitHubUserListHotSubscription == null || isForced) {
+            /* This is not needed here, since pullToRefresh will not trigger onRefresh()
+               a second time as long as we don't stop the animation, this is to demonstrate
+               how it can be done */
+            if (gitHubUserListHotSubscription != null && !gitHubUserListHotSubscription.isUnsubscribed()) {
+                gitHubUserListHotSubscription.unsubscribe();
+            }
+
+            gitHubUserListHotSubscription = gitHubUserListDataSource
+                    .getGitHubUsers(isForced)
+                    .subscribe(integer -> {},
+                            error -> view.stopRefreshAnimation());
+        }
     }
 
-    private void setDataList() {
-        compositeSubscription.add(realm.where(GitHubUser.class).findAllAsync().asObservable()
-                .filter(RealmResults::isLoaded)
-                .filter(RealmResults::isValid)
-                .doOnSubscribe(() -> view.startRefreshAnimation())
-                .observeOn(rxSchedulerConfiguration.getMainThread())
-                .subscribe(gitHubUsers -> {
-                    view.setDataList(gitHubUsers);
-                    view.stopRefreshAnimation();
-                }, throwable -> {
-                    view.stopRefreshAnimation();
-                }));
-    }
-
-    private Observable<Integer> getGitHubUsersFromRealm(boolean isForced) {
-        return Observable.just(isForced)
-                .filter(isForcedIn -> !isForcedIn)
-                .observeOn(rxSchedulerConfiguration.getMainThread())
-                .flatMap(isForcedIn -> {
-                    List<GitHubUser> gitHubUserList = realm
-                            .where(GitHubUser.class).findAllAsync();
-                    return Observable.just(gitHubUserList.size());
-                });
-    }
-
-    private Observable<Integer> getGitHubUsersFromRetrofit() {
-        return internetConnection.isInternetOn(view.getActivity())
-                .filter(connectionStatus -> connectionStatus)
-                .switchMap(connectionStatus -> gitHubApiInterface.getGitHubUsersList())
-                .subscribeOn(rxSchedulerConfiguration.getComputationThread())
-                .observeOn(rxSchedulerConfiguration.getMainThread())
-                .map(gitHubUserList -> {
-                    realm.executeTransactionAsync(realm -> realm.copyToRealmOrUpdate(gitHubUserList));
-                    return gitHubUserList.size();
-                });
-    }
-
-    public void bind(GitHubUserListFragment gitHubUserListFragment) {
+    public void bind(GitHubUserListFragment gitHubUserListFragment, boolean isForced) {
         this.view = gitHubUserListFragment;
-        this.compositeSubscription = new CompositeSubscription();
+        view.startRefreshAnimation();
         realm = Realm.getDefaultInstance();
-        setDataList();
+
+        if (subscription == null || subscription.isUnsubscribed()) {
+            subscription = realm.where(GitHubUser.class).findAllAsync().asObservable()
+                    .filter(RealmResults::isLoaded)
+                    .filter(RealmResults::isValid)
+                    .observeOn(rxSchedulerConfiguration.getMainThread())
+                    .subscribe(gitHubUsers -> {
+                        view.setDataList(gitHubUsers);
+                        view.stopRefreshAnimation();
+                    }, error -> {
+                        view.stopRefreshAnimation();
+                    });
+        }
+
+        loadGitHubUserList(isForced);
     }
 
     public void unBind() {
-        if (compositeSubscription != null && !compositeSubscription.isUnsubscribed()) {
-            compositeSubscription.unsubscribe();
-            compositeSubscription = null;
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
         }
 
         realm.close();
-        view.stopRefreshAnimation();
         this.view = null;
+    }
+
+    public void unSubscribe() {
+        if (gitHubUserListHotSubscription != null && !gitHubUserListHotSubscription.isUnsubscribed()) {
+            gitHubUserListHotSubscription.unsubscribe();
+        }
+
+        gitHubUserListDataSource.unSubscribe();
     }
 }

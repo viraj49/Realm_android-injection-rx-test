@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.jsonModel.GitHubUser;
 import tank.viraj.realm.realmModel.GitHubUserRealm;
 
 /**

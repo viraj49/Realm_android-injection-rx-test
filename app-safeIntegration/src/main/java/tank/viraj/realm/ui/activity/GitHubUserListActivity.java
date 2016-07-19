@@ -1,5 +1,6 @@
 package tank.viraj.realm.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import tank.viraj.realm.ui.fragment.GitHubUserListFragment;
  * Created by Viraj Tank, 18-06-2016.
  */
 public class GitHubUserListActivity extends AppCompatActivity {
+    private static final String FLAG_COMMIT_FRAGMENT = "gitHubUserListFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,9 +21,12 @@ public class GitHubUserListActivity extends AppCompatActivity {
         setActionBarTitle();
 
         /* create the fragment and load it in frame layout */
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_main, new GitHubUserListFragment())
+        Intent intent = getIntent();
+        boolean commitFragment = intent.getBooleanExtra(FLAG_COMMIT_FRAGMENT, true);
+        if (savedInstanceState == null && commitFragment) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.activity_main, new GitHubUserListFragment())
                     .commit();
         }
     }

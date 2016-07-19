@@ -10,11 +10,13 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.subjects.ReplaySubject;
 import tank.viraj.realm.adapter.MainAdapter;
 import tank.viraj.realm.dao.GitHubUserDao;
 import tank.viraj.realm.dao.GitHubUserProfileDao;
 import tank.viraj.realm.dataSource.GitHubUserListDataSource;
 import tank.viraj.realm.dataSource.GitHubUserProfileDataSource;
+import tank.viraj.realm.jsonModel.GitHubUserProfile;
 import tank.viraj.realm.presenter.GitHubUserPresenter;
 import tank.viraj.realm.presenter.GitHubUserProfilePresenter;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
@@ -35,6 +37,12 @@ public class ApplicationModule {
         this.application = application;
     }
 
+    /* */
+    @Provides
+    ReplaySubject<GitHubUserProfile> provideGitHubUserProfileReplaySubject() {
+        return ReplaySubject.create();
+    }
+
     /* DAO (data access object) for GitHubUser model */
     @Provides
     GitHubUserDao provideGitHubUserDao() {
@@ -49,8 +57,9 @@ public class ApplicationModule {
 
     /* Presenter for GitHubUser */
     @Provides
-    GitHubUserPresenter provideGitHubPresenter(GitHubUserListDataSource gitHubUserListDataSource) {
-        return new GitHubUserPresenter(gitHubUserListDataSource);
+    GitHubUserPresenter provideGitHubPresenter(GitHubUserListDataSource gitHubUserListDataSource,
+                                               RxSchedulerConfiguration rxSchedulerConfiguration) {
+        return new GitHubUserPresenter(gitHubUserListDataSource, rxSchedulerConfiguration);
     }
 
     /* Presenter for GitHubUserProfile */
@@ -65,18 +74,20 @@ public class ApplicationModule {
     @Provides
     GitHubUserListDataSource provideGitHubUserListDataSource(GitHubApiInterface gitHubApiInterface,
                                                              GitHubUserDao gitHubUserDao,
-                                                             InternetConnection internetConnection) {
+                                                             InternetConnection internetConnection,
+                                                             RxSchedulerConfiguration rxSchedulerConfiguration) {
         return new GitHubUserListDataSource(application.getApplicationContext(),
-                gitHubApiInterface, gitHubUserDao, internetConnection);
+                gitHubApiInterface, gitHubUserDao, internetConnection, rxSchedulerConfiguration);
     }
 
     /* Data source for GitHubUserProfileDataSource */
     @Provides
     GitHubUserProfileDataSource provideGitHubUserProfileDataSource(
             GitHubApiInterface gitHubApiInterface, GitHubUserProfileDao gitHubUserProfileDao,
-            InternetConnection internetConnection) {
+            InternetConnection internetConnection, RxSchedulerConfiguration rxSchedulerConfiguration,
+            ReplaySubject<GitHubUserProfile> gitHubUserProfileSubject) {
         return new GitHubUserProfileDataSource(application.getApplicationContext(),
-                gitHubApiInterface, gitHubUserProfileDao, internetConnection);
+                gitHubApiInterface, gitHubUserProfileDao, internetConnection, rxSchedulerConfiguration, gitHubUserProfileSubject);
     }
 
     /* OkHttpclient for retrofit2 */

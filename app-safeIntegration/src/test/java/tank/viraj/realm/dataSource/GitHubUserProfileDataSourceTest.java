@@ -7,17 +7,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import rx.Observable;
 import rx.observers.TestSubscriber;
+import rx.schedulers.Schedulers;
+import rx.subjects.ReplaySubject;
 import tank.viraj.realm.dao.GitHubUserProfileDao;
-import tank.viraj.realm.model.GitHubUserProfile;
+import tank.viraj.realm.jsonModel.GitHubUserProfile;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
 import tank.viraj.realm.util.InternetConnection;
 import tank.viraj.realm.util.RxSchedulerConfiguration;
+
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Viraj Tank, 20/06/16.
@@ -40,8 +43,12 @@ public class GitHubUserProfileDataSourceTest {
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
+        when(rxSchedulerConfiguration.getComputationThread()).thenReturn(Schedulers.immediate());
+        when(rxSchedulerConfiguration.getMainThread()).thenReturn(Schedulers.immediate());
+
         gitHubUserProfileDataSource = new GitHubUserProfileDataSource(context, gitHubApiInterface,
-                gitHubUserProfileDao, internetConnection);
+                gitHubUserProfileDao, internetConnection,
+                rxSchedulerConfiguration, ReplaySubject.create());
     }
 
     /* get getGitHubUserProfile from Realm */
@@ -49,15 +56,16 @@ public class GitHubUserProfileDataSourceTest {
     public void getGitHubUsersFromDaoTest() {
         GitHubUserProfile gitHubUserProfile = new GitHubUserProfile("testLogin", "testName", "testEmail");
 
-        Mockito.when(internetConnection.isInternetOn(context))
+        when(internetConnection.isInternetOn(context))
                 .thenReturn(Observable.just(true));
-        Mockito.when(gitHubUserProfileDao.getProfile("testLogin")).thenReturn(gitHubUserProfile);
-        Mockito.when(gitHubApiInterface.getGitHubUserProfile("testLogin"))
+        when(gitHubUserProfileDao.getProfile("testLogin")).thenReturn(gitHubUserProfile);
+        when(gitHubApiInterface.getGitHubUserProfile("testLogin"))
                 .thenReturn(Observable.just(gitHubUserProfile));
 
         TestSubscriber<GitHubUserProfile> testSubscriber = new TestSubscriber<>();
-        gitHubUserProfileDataSource.getGitHubUserProfile("testLogin", false)
+        gitHubUserProfileDataSource.getGitHubUserListHotSubscription()
                 .subscribe(testSubscriber);
+        gitHubUserProfileDataSource.getGitHubUserProfile("testLogin", false);
 
         Assert.assertEquals(1, testSubscriber.getOnNextEvents().size());
         Assert.assertEquals("testLogin", testSubscriber.getOnNextEvents().get(0).getLogin());
@@ -70,14 +78,15 @@ public class GitHubUserProfileDataSourceTest {
     public void getGitHubUsersFromRetrofitTest() {
         GitHubUserProfile gitHubUserProfile = new GitHubUserProfile("testLogin",
                 "testName", "testEmail");
-        Mockito.when(internetConnection.isInternetOn(context))
+        when(internetConnection.isInternetOn(context))
                 .thenReturn(Observable.just(true));
-        Mockito.when(gitHubApiInterface.getGitHubUserProfile("testLogin"))
+        when(gitHubApiInterface.getGitHubUserProfile("testLogin"))
                 .thenReturn(Observable.just(gitHubUserProfile));
 
         TestSubscriber<GitHubUserProfile> testSubscriber = new TestSubscriber<>();
-        gitHubUserProfileDataSource.getGitHubUserProfile("testLogin", true)
+        gitHubUserProfileDataSource.getGitHubUserListHotSubscription()
                 .subscribe(testSubscriber);
+        gitHubUserProfileDataSource.getGitHubUserProfile("testLogin", true);
 
         Assert.assertEquals(1, testSubscriber.getOnNextEvents().size());
         Assert.assertEquals("testLogin", testSubscriber.getOnNextEvents().get(0).getLogin());
