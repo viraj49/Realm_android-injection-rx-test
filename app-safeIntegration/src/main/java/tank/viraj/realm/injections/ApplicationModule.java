@@ -10,13 +10,11 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.subjects.ReplaySubject;
 import tank.viraj.realm.adapter.MainAdapter;
 import tank.viraj.realm.dao.GitHubUserDao;
 import tank.viraj.realm.dao.GitHubUserProfileDao;
 import tank.viraj.realm.dataSource.GitHubUserListDataSource;
 import tank.viraj.realm.dataSource.GitHubUserProfileDataSource;
-import tank.viraj.realm.jsonModel.GitHubUserProfile;
 import tank.viraj.realm.presenter.GitHubUserPresenter;
 import tank.viraj.realm.presenter.GitHubUserProfilePresenter;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
@@ -37,12 +35,6 @@ public class ApplicationModule {
         this.application = application;
     }
 
-    /* */
-    @Provides
-    ReplaySubject<GitHubUserProfile> provideGitHubUserProfileReplaySubject() {
-        return ReplaySubject.create();
-    }
-
     /* DAO (data access object) for GitHubUser model */
     @Provides
     GitHubUserDao provideGitHubUserDao() {
@@ -58,16 +50,18 @@ public class ApplicationModule {
     /* Presenter for GitHubUser */
     @Provides
     GitHubUserPresenter provideGitHubPresenter(GitHubUserListDataSource gitHubUserListDataSource,
-                                               RxSchedulerConfiguration rxSchedulerConfiguration) {
-        return new GitHubUserPresenter(gitHubUserListDataSource, rxSchedulerConfiguration);
+                                               RxSchedulerConfiguration rxSchedulerConfiguration,
+                                               InternetConnection internetConnection) {
+        return new GitHubUserPresenter(gitHubUserListDataSource, rxSchedulerConfiguration, internetConnection);
     }
 
     /* Presenter for GitHubUserProfile */
     @Provides
     GitHubUserProfilePresenter provideProfilePresenter(
             GitHubUserProfileDataSource gitHubUserProfileDataSource,
-            RxSchedulerConfiguration rxSchedulerConfiguration) {
-        return new GitHubUserProfilePresenter(gitHubUserProfileDataSource, rxSchedulerConfiguration);
+            RxSchedulerConfiguration rxSchedulerConfiguration,
+            InternetConnection internetConnection) {
+        return new GitHubUserProfilePresenter(gitHubUserProfileDataSource, rxSchedulerConfiguration, internetConnection);
     }
 
     /* Data source for GitHubUserListDataSource */
@@ -76,7 +70,7 @@ public class ApplicationModule {
                                                              GitHubUserDao gitHubUserDao,
                                                              InternetConnection internetConnection,
                                                              RxSchedulerConfiguration rxSchedulerConfiguration) {
-        return new GitHubUserListDataSource(application.getApplicationContext(),
+        return new GitHubUserListDataSource(
                 gitHubApiInterface, gitHubUserDao, internetConnection, rxSchedulerConfiguration);
     }
 
@@ -84,10 +78,9 @@ public class ApplicationModule {
     @Provides
     GitHubUserProfileDataSource provideGitHubUserProfileDataSource(
             GitHubApiInterface gitHubApiInterface, GitHubUserProfileDao gitHubUserProfileDao,
-            InternetConnection internetConnection, RxSchedulerConfiguration rxSchedulerConfiguration,
-            ReplaySubject<GitHubUserProfile> gitHubUserProfileSubject) {
-        return new GitHubUserProfileDataSource(application.getApplicationContext(),
-                gitHubApiInterface, gitHubUserProfileDao, internetConnection, rxSchedulerConfiguration, gitHubUserProfileSubject);
+            InternetConnection internetConnection, RxSchedulerConfiguration rxSchedulerConfiguration) {
+        return new GitHubUserProfileDataSource(
+                gitHubApiInterface, gitHubUserProfileDao, internetConnection, rxSchedulerConfiguration);
     }
 
     /* OkHttpclient for retrofit2 */
@@ -128,6 +121,6 @@ public class ApplicationModule {
     @Provides
     @Singleton
     InternetConnection provideInternetConnection() {
-        return new InternetConnection();
+        return new InternetConnection(application.getApplicationContext());
     }
 }

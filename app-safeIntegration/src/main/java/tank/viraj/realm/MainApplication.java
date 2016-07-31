@@ -2,6 +2,8 @@ package tank.viraj.realm;
 
 import android.app.Application;
 
+import com.squareup.leakcanary.LeakCanary;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import tank.viraj.realm.injections.ApplicationComponent;
@@ -21,6 +23,9 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        /* Leak canary */
+        LeakCanary.install(this);
 
         initializeRealm();
 

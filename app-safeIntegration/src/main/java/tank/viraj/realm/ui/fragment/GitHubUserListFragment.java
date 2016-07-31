@@ -3,6 +3,7 @@ package tank.viraj.realm.ui.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,7 +26,7 @@ import butterknife.Unbinder;
 import tank.viraj.realm.MainApplication;
 import tank.viraj.realm.R;
 import tank.viraj.realm.adapter.MainAdapter;
-import tank.viraj.realm.jsonModel.GitHubUser;
+import tank.viraj.realm.model.GitHubUser;
 import tank.viraj.realm.presenter.GitHubUserPresenter;
 import tank.viraj.realm.ui.activity.GitHubUserProfileActivity;
 
@@ -68,9 +69,9 @@ public class GitHubUserListFragment extends Fragment
         unbinder = ButterKnife.bind(this, view);
 
         mainAdapter.setOnItemClickListener((v, gitHubUser) -> {
-            Intent switchToUserProfile = new Intent(getActivity(), GitHubUserProfileActivity.class);
-            switchToUserProfile.putExtra(getActivity().getString(R.string.github_user_key), gitHubUser);
-            getActivity().startActivity(switchToUserProfile);
+            Intent switchToUserProfile = new Intent(GitHubUserListFragment.this.getActivity(), GitHubUserProfileActivity.class);
+            switchToUserProfile.putExtra(GitHubUserListFragment.this.getActivity().getString(R.string.github_user_key), gitHubUser);
+            GitHubUserListFragment.this.getActivity().startActivity(switchToUserProfile);
         });
 
         // pullToRefresh
@@ -134,7 +135,7 @@ public class GitHubUserListFragment extends Fragment
 
     @Override
     public void onDestroy() {
-        gitHubUserPresenter.unSubscribe();
+        gitHubUserPresenter.unSubscribeHotSubscription();
         mainAdapter.reset();
         super.onDestroy();
     }
@@ -143,9 +144,17 @@ public class GitHubUserListFragment extends Fragment
         mainAdapter.setDataList(gitHubUserList);
     }
 
+    public void showSnackBar() {
+        Snackbar.make(pullToRefreshLayout, "No internet connection!", Snackbar.LENGTH_LONG)
+                .setAction("RETRY", view -> {
+                    startRefreshAnimation();
+                    gitHubUserPresenter.getGitHubUsers(true);
+                }).show();
+    }
+
     @Override
     public void onRefresh() {
         /* load fresh data, when pullToRefresh is called */
-        gitHubUserPresenter.loadGitHubUserList(true);
+        gitHubUserPresenter.getGitHubUsers(true);
     }
 }

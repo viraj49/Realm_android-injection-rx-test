@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tank.viraj.realm.R;
-import tank.viraj.realm.jsonModel.GitHubUser;
+import tank.viraj.realm.model.GitHubUser;
 
 /**
  * Adapter for RecyclerView
@@ -31,15 +31,35 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.GitHubViewHold
     }
 
     @Override
+    public int getItemViewType(int position) {
+        if (gitHubUserList.isEmpty()) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    @Override
     public GitHubViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View itemView = LayoutInflater.
-                from(viewGroup.getContext()).
-                inflate(R.layout.item_layout, viewGroup, false);
+        View itemView;
+        if (viewType == 0) {
+            itemView = LayoutInflater.
+                    from(viewGroup.getContext()).
+                    inflate(R.layout.empty_item_layout, viewGroup, false);
+        } else {
+            itemView = LayoutInflater.
+                    from(viewGroup.getContext()).
+                    inflate(R.layout.item_layout, viewGroup, false);
+        }
         return new GitHubViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(GitHubViewHolder gitHubViewHolder, int position) {
+        if (gitHubUserList.isEmpty()) {
+            return;
+        }
+
         gitHubViewHolder.vUserLogin.setText(gitHubUserList.get(position).getLogin());
         gitHubViewHolder.vUserId.setText(String.format(context.getString(R.string.userId),
                 gitHubUserList.get(position).getId()));
@@ -52,6 +72,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.GitHubViewHold
 
     @Override
     public int getItemCount() {
+        if (gitHubUserList.isEmpty()) {
+            return 1;
+        }
         return gitHubUserList.size();
     }
 
@@ -68,12 +91,17 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.GitHubViewHold
 
     /* viewHolder */
     class GitHubViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        protected ImageView vUserIcon;
-        protected TextView vUserLogin;
-        protected TextView vUserId;
+        ImageView vUserIcon;
+        TextView vUserLogin;
+        TextView vUserId;
 
-        public GitHubViewHolder(View v) {
+        GitHubViewHolder(View v) {
             super(v);
+
+            if (gitHubUserList.isEmpty()) {
+                return;
+            }
+
             vUserIcon = (ImageView) v.findViewById(R.id.user_icon);
             vUserLogin = (TextView) v.findViewById(R.id.user_name);
             vUserId = (TextView) v.findViewById(R.id.user_type);

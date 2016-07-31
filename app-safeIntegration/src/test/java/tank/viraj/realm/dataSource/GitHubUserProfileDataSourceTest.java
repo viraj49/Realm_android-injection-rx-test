@@ -13,9 +13,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
-import rx.subjects.ReplaySubject;
 import tank.viraj.realm.dao.GitHubUserProfileDao;
-import tank.viraj.realm.jsonModel.GitHubUserProfile;
+import tank.viraj.realm.model.GitHubUserProfile;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
 import tank.viraj.realm.util.InternetConnection;
 import tank.viraj.realm.util.RxSchedulerConfiguration;
@@ -46,9 +45,9 @@ public class GitHubUserProfileDataSourceTest {
         when(rxSchedulerConfiguration.getComputationThread()).thenReturn(Schedulers.immediate());
         when(rxSchedulerConfiguration.getMainThread()).thenReturn(Schedulers.immediate());
 
-        gitHubUserProfileDataSource = new GitHubUserProfileDataSource(context, gitHubApiInterface,
+        gitHubUserProfileDataSource = new GitHubUserProfileDataSource(gitHubApiInterface,
                 gitHubUserProfileDao, internetConnection,
-                rxSchedulerConfiguration, ReplaySubject.create());
+                rxSchedulerConfiguration);
     }
 
     /* get getGitHubUserProfile from Realm */
@@ -56,14 +55,14 @@ public class GitHubUserProfileDataSourceTest {
     public void getGitHubUsersFromDaoTest() {
         GitHubUserProfile gitHubUserProfile = new GitHubUserProfile("testLogin", "testName", "testEmail");
 
-        when(internetConnection.isInternetOn(context))
+        when(internetConnection.isInternetOnObservable())
                 .thenReturn(Observable.just(true));
         when(gitHubUserProfileDao.getProfile("testLogin")).thenReturn(gitHubUserProfile);
         when(gitHubApiInterface.getGitHubUserProfile("testLogin"))
                 .thenReturn(Observable.just(gitHubUserProfile));
 
         TestSubscriber<GitHubUserProfile> testSubscriber = new TestSubscriber<>();
-        gitHubUserProfileDataSource.getGitHubUserListHotSubscription()
+        gitHubUserProfileDataSource.getGitHubUserProfileHotSubscription()
                 .subscribe(testSubscriber);
         gitHubUserProfileDataSource.getGitHubUserProfile("testLogin", false);
 
@@ -78,13 +77,13 @@ public class GitHubUserProfileDataSourceTest {
     public void getGitHubUsersFromRetrofitTest() {
         GitHubUserProfile gitHubUserProfile = new GitHubUserProfile("testLogin",
                 "testName", "testEmail");
-        when(internetConnection.isInternetOn(context))
+        when(internetConnection.isInternetOnObservable())
                 .thenReturn(Observable.just(true));
         when(gitHubApiInterface.getGitHubUserProfile("testLogin"))
                 .thenReturn(Observable.just(gitHubUserProfile));
 
         TestSubscriber<GitHubUserProfile> testSubscriber = new TestSubscriber<>();
-        gitHubUserProfileDataSource.getGitHubUserListHotSubscription()
+        gitHubUserProfileDataSource.getGitHubUserProfileHotSubscription()
                 .subscribe(testSubscriber);
         gitHubUserProfileDataSource.getGitHubUserProfile("testLogin", true);
 

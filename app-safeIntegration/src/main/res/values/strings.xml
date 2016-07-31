@@ -12,4 +12,5 @@
     <string name="clear_user_list">Cleared user list from Realm</string>
     <string name="clear_user_profile">Cleared Profile data from Realm</string>
     <string name="profile_fragment">profile_fragment</string>
+    <string name="no_user_data_available">No User Data Available\nThere are three things you can do\n1.Pull to refresh to try again\n2.Enable internet connection and wait, app will reconnect on its own\n3. Use SnackBar Retry button</string>
 </resources>

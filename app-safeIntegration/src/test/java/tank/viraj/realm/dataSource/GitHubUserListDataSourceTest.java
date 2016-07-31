@@ -18,7 +18,7 @@ import rx.Observable;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
 import tank.viraj.realm.dao.GitHubUserDao;
-import tank.viraj.realm.jsonModel.GitHubUser;
+import tank.viraj.realm.model.GitHubUser;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
 import tank.viraj.realm.util.InternetConnection;
 import tank.viraj.realm.util.RxSchedulerConfiguration;
@@ -46,7 +46,7 @@ public class GitHubUserListDataSourceTest {
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
-        gitHubUserListDataSource = new GitHubUserListDataSource(context, gitHubApiInterface,
+        gitHubUserListDataSource = new GitHubUserListDataSource(gitHubApiInterface,
                 gitHubUserDao, internetConnection, rxSchedulerConfiguration);
 
         GitHubUser p1 = new GitHubUser(1, "test1", "testName1");
@@ -63,7 +63,7 @@ public class GitHubUserListDataSourceTest {
     /* get getGitHubUsersList list from Realm */
     @Test
     public void getGitHubUsersFromDaoTest() {
-        Mockito.when(internetConnection.isInternetOn(context))
+        Mockito.when(internetConnection.isInternetOnObservable())
                 .thenReturn(Observable.just(true));
         TestSubscriber<List<GitHubUser>> testSubscriber = new TestSubscriber<>();
         gitHubUserListDataSource.getGitHubUserListHotSubscription()
@@ -83,7 +83,7 @@ public class GitHubUserListDataSourceTest {
     /* get getGitHubUsersList list from Retrofit2 and update on Realm */
     @Test
     public void getGitHubUsersFromRetrofitTest() {
-        Mockito.when(internetConnection.isInternetOn(context))
+        Mockito.when(internetConnection.isInternetOnObservable())
                 .thenReturn(Observable.just(true));
         TestSubscriber<List<GitHubUser>> testSubscriber = new TestSubscriber<>();
         gitHubUserListDataSource.getGitHubUserListHotSubscription()

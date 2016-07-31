@@ -21,9 +21,8 @@ import io.realm.RealmResults;
 import io.realm.internal.RealmCore;
 import tank.viraj.realm.BuildConfig;
 import tank.viraj.realm.MainApplicationTest;
-import tank.viraj.realm.jsonModel.GitHubUserProfile;
-import tank.viraj.realm.realmModel.GitHubUserProfileRealm;
-import tank.viraj.realm.realmModel.GitHubUserRealm;
+import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.model.GitHubUserProfile;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -60,27 +59,32 @@ public class GitHubUserProfileDaoTest {
         doNothing().when(RealmCore.class);
         RealmCore.loadLibrary(any(Context.class));
         when(Realm.getDefaultInstance()).thenReturn(mockRealm);
-        when(mockRealm.createObject(GitHubUserRealm.class)).thenReturn(new GitHubUserRealm());
+        when(mockRealm.createObject(GitHubUser.class)).thenReturn(new GitHubUser());
 
         // profile1
-        GitHubUserProfileRealm profile1 = new GitHubUserProfileRealm("testLogin1",
+        GitHubUserProfile profile1 = new GitHubUserProfile("testLogin1",
                 "testName1", "testEmail1");
-        GitHubUserProfileRealm profile2 = new GitHubUserProfileRealm("testLogin2",
+        GitHubUserProfile profile2 = new GitHubUserProfile("testLogin2",
                 "testName2", "testEmail2");
-        GitHubUserProfileRealm profile3 = null;
+        GitHubUserProfile profile3 = null;
 
-        RealmQuery<GitHubUserProfileRealm> profileQuery = mockRealmQuery();
-        RealmQuery<GitHubUserProfileRealm> profileQuery1 = mockRealmQuery();
-        RealmQuery<GitHubUserProfileRealm> profileQuery2 = mockRealmQuery();
-        RealmQuery<GitHubUserProfileRealm> profileQuery3 = mockRealmQuery();
+        RealmQuery<GitHubUserProfile> profileQuery = mockRealmQuery();
+        RealmQuery<GitHubUserProfile> profileQuery1 = mockRealmQuery();
+        RealmQuery<GitHubUserProfile> profileQuery2 = mockRealmQuery();
+        RealmQuery<GitHubUserProfile> profileQuery3 = mockRealmQuery();
 
-        when(mockRealm.where(GitHubUserProfileRealm.class)).thenReturn(profileQuery);
+        when(mockRealm.where(GitHubUserProfile.class)).thenReturn(profileQuery);
         when(profileQuery.equalTo("login", "testLogin1")).thenReturn(profileQuery1);
         when(profileQuery.equalTo("login", "testLogin2")).thenReturn(profileQuery2);
         when(profileQuery.equalTo("login", "testLogin3")).thenReturn(profileQuery3);
         when(profileQuery1.findFirst()).thenReturn(profile1);
         when(profileQuery2.findFirst()).thenReturn(profile2);
         when(profileQuery3.findFirst()).thenReturn(profile3);
+
+        // copyFromRealm mock
+        when(mockRealm.copyFromRealm(profile1)).thenReturn(profile1);
+        when(mockRealm.copyFromRealm(profile2)).thenReturn(profile2);
+        when(mockRealm.copyFromRealm(profile3)).thenReturn(profile3);
 
         gitHubUserProfileDao = new GitHubUserProfileDao();
     }
@@ -134,5 +138,10 @@ public class GitHubUserProfileDaoTest {
     @SuppressWarnings("unchecked")
     private <T extends RealmObject> RealmQuery<T> mockRealmQuery() {
         return mock(RealmQuery.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends RealmObject> RealmObject mockRealmResults() {
+        return mock(RealmObject.class);
     }
 }

@@ -1,6 +1,7 @@
 package tank.viraj.realm.ui.fragment;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -22,9 +23,12 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import tank.viraj.realm.MainApplication;
 import tank.viraj.realm.R;
-import tank.viraj.realm.jsonModel.GitHubUser;
-import tank.viraj.realm.jsonModel.GitHubUserProfile;
+import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.model.GitHubUserProfile;
 import tank.viraj.realm.presenter.GitHubUserProfilePresenter;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 /**
  * Created by Viraj Tank, 18-06-2016.
@@ -43,11 +47,15 @@ public class GitHubUserProfileFragment extends Fragment
     @BindView(R.id.profile_email)
     TextView profileEmail;
 
+    @BindView(R.id.error_message)
+    TextView errorMessage;
+
     @BindView(R.id.refresh_profile)
     SwipeRefreshLayout pullToRefreshLayout;
 
     private GitHubUser gitHubUser;
     private Unbinder unbinder;
+    private GitHubUserProfile gitHubUserProfile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +74,6 @@ public class GitHubUserProfileFragment extends Fragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
-        setRetainInstance(true);
         unbinder = ButterKnife.bind(this, view);
 
         // pull to refresh
@@ -125,16 +132,40 @@ public class GitHubUserProfileFragment extends Fragment
     }
 
     public void setData(GitHubUserProfile gitHubUserProfile) {
-        Picasso.with(getActivity())
-                .load(gitHubUser.getAvatar_url())
-                .into(profileIcon);
-        profileName.setText(String.format("%s%s", getActivity().getString(R.string.name), gitHubUserProfile.getName()));
-        profileEmail.setText(String.format("%s%s", getActivity().getString(R.string.email), gitHubUserProfile.getEmail()));
+        this.gitHubUserProfile = gitHubUserProfile;
+        loadData();
+    }
+
+    public void loadData() {
+        if (gitHubUserProfile.getName().contains("default")) {
+            errorMessage.setVisibility(VISIBLE);
+            profileIcon.setVisibility(GONE);
+            profileName.setVisibility(GONE);
+            profileEmail.setVisibility(GONE);
+        } else {
+            errorMessage.setVisibility(GONE);
+            profileIcon.setVisibility(VISIBLE);
+            profileName.setVisibility(VISIBLE);
+            profileEmail.setVisibility(VISIBLE);
+            Picasso.with(getActivity())
+                    .load(gitHubUser.getAvatar_url())
+                    .into(profileIcon);
+            profileName.setText(String.format("%s%s", getActivity().getString(R.string.name), gitHubUserProfile.getName()));
+            profileEmail.setText(String.format("%s%s", getActivity().getString(R.string.email), gitHubUserProfile.getEmail()));
+        }
+    }
+
+    public void showSnackBar() {
+        Snackbar.make(pullToRefreshLayout, "No internet connection!", Snackbar.LENGTH_LONG)
+                .setAction("RETRY", view -> {
+                    startRefreshAnimation();
+                    gitHubUserProfilePresenter.getGitHubUserProfile(gitHubUser.getLogin(), true);
+                }).show();
     }
 
     @Override
     public void onRefresh() {
         /* load fresh data */
-        gitHubUserProfilePresenter.loadGitHubUserProfile(gitHubUser.getLogin(), true);
+        gitHubUserProfilePresenter.getGitHubUserProfile(gitHubUser.getLogin(), true);
     }
 }

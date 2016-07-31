@@ -35,10 +35,11 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     /* support library */
-    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
 
     /* recyclerView */
-    compile 'com.android.support:recyclerview-v7:24.0.0'
+    compile 'com.android.support:recyclerview-v7:24.1.1'
 
     /* rx */
     compile 'io.reactivex:rxandroid:1.1.0'
@@ -64,6 +65,8 @@ dependencies {
 
     /* picasso - for loading and caching images */
     compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
 
     /* TESTING */
 

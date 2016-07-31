@@ -1,14 +1,13 @@
 package tank.viraj.realm.dataSource;
 
-import android.content.Context;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
 import rx.Subscription;
-import rx.subjects.ReplaySubject;
+import rx.subjects.PublishSubject;
 import tank.viraj.realm.dao.GitHubUserDao;
-import tank.viraj.realm.jsonModel.GitHubUser;
+import tank.viraj.realm.model.GitHubUser;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
 import tank.viraj.realm.util.InternetConnection;
 import tank.viraj.realm.util.RxSchedulerConfiguration;
@@ -17,23 +16,21 @@ import tank.viraj.realm.util.RxSchedulerConfiguration;
  * Created by Viraj Tank, 18-06-2016.
  */
 public class GitHubUserListDataSource {
-    private Context context;
     private GitHubApiInterface gitHubApiInterface;
     private GitHubUserDao gitHubUserDao;
     private InternetConnection internetConnection;
-    private ReplaySubject<List<GitHubUser>> gitHubUserListSubject;
+    private PublishSubject<List<GitHubUser>> gitHubUserListSubject;
     private Subscription gitHubUserListHotSubscription;
     private RxSchedulerConfiguration rxSchedulerConfiguration;
 
-    public GitHubUserListDataSource(Context context, GitHubApiInterface gitHubApiInterface,
+    public GitHubUserListDataSource(GitHubApiInterface gitHubApiInterface,
                                     GitHubUserDao gitHubUserDao, InternetConnection internetConnection,
                                     RxSchedulerConfiguration rxSchedulerConfiguration) {
-        this.context = context;
         this.gitHubApiInterface = gitHubApiInterface;
         this.gitHubUserDao = gitHubUserDao;
         this.internetConnection = internetConnection;
         this.rxSchedulerConfiguration = rxSchedulerConfiguration;
-        this.gitHubUserListSubject = ReplaySubject.create();
+        this.gitHubUserListSubject = PublishSubject.create();
     }
 
     public Observable<List<GitHubUser>> getGitHubUserListHotSubscription() {
@@ -41,7 +38,7 @@ public class GitHubUserListDataSource {
     }
 
     public void getGitHubUsers(boolean isForced) {
-        if (gitHubUserListHotSubscription == null || isForced) {
+        if (gitHubUserListHotSubscription == null || gitHubUserListHotSubscription.isUnsubscribed() || isForced) {
             /* This is not needed here, since pullToRefresh will not trigger onRefresh()
                a second time as long as we don't stop the animation, this is to demonstrate
                how it can be done */
@@ -51,12 +48,14 @@ public class GitHubUserListDataSource {
 
             gitHubUserListHotSubscription = Observable.concat(
                     getGitHubUsersFromRealm(isForced),
-                    getGitHubUsersFromRetrofit())
+                    getGitHubUsersFromRetrofit(),
+                    getDefaultResponse())
                     .takeFirst(gitHubUserList -> gitHubUserList != null && gitHubUserList.size() > 0)
                     .subscribeOn(rxSchedulerConfiguration.getComputationThread())
-                    .observeOn(rxSchedulerConfiguration.getComputationThread())
+                    .observeOn(rxSchedulerConfiguration.getMainThread())
                     .subscribe(gitHubUserList -> gitHubUserListSubject.onNext(gitHubUserList),
-                            Throwable::printStackTrace);
+                            error -> gitHubUserListSubject.onNext(getDefaultGitHubUserList())
+                    );
         }
     }
 
@@ -67,12 +66,25 @@ public class GitHubUserListDataSource {
     }
 
     private Observable<List<GitHubUser>> getGitHubUsersFromRetrofit() {
-        return internetConnection.isInternetOn(context)
-                .switchMap(connectionStatus -> connectionStatus ? gitHubApiInterface.getGitHubUsersList()
-                        .map(gitHubUserList -> {
-                            gitHubUserDao.storeOrUpdateGitHubUserList(gitHubUserList);
-                            return gitHubUserList;
-                        }) : Observable.empty());
+        return internetConnection.isInternetOnObservable()
+                .switchMap(connectionStatus -> connectionStatus ?
+                        gitHubApiInterface.getGitHubUsersList()
+                                .map(gitHubUserList -> {
+                                    gitHubUserDao.storeOrUpdateGitHubUserList(gitHubUserList);
+                                    return gitHubUserList;
+                                })
+                        : Observable.empty());
+    }
+
+    private Observable<List<GitHubUser>> getDefaultResponse() {
+        return Observable.just(getDefaultGitHubUserList());
+    }
+
+    private List<GitHubUser> getDefaultGitHubUserList() {
+        GitHubUser gitHubUser = new GitHubUser(-1, "default", "default");
+        List<GitHubUser> list = new ArrayList<>();
+        list.add(gitHubUser);
+        return list;
     }
 
     public void clearRealmData() {

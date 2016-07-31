@@ -1,12 +1,11 @@
 package tank.viraj.realm.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 import tank.viraj.realm.R;
-import tank.viraj.realm.jsonModel.GitHubUser;
+import tank.viraj.realm.model.GitHubUser;
 import tank.viraj.realm.ui.fragment.GitHubUserProfileFragment;
 
 /**
@@ -21,13 +20,9 @@ public class GitHubUserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         setActionBarTitle();
 
-        GitHubUserProfileFragment gitHubUserProfileFragment;
-
         /* create the fragment and load it in frame layout */
-        Intent intent = getIntent();
-        boolean commitFragment = intent.getBooleanExtra(FLAG_COMMIT_FRAGMENT, true);
-        if (savedInstanceState == null && commitFragment) {
-            gitHubUserProfileFragment = new GitHubUserProfileFragment();
+        if (savedInstanceState == null) {
+            GitHubUserProfileFragment gitHubUserProfileFragment = new GitHubUserProfileFragment();
             GitHubUser gitHubUser = (GitHubUser) getIntent()
                     .getSerializableExtra(getString(R.string.github_user_key));
             gitHubUserProfileFragment.setGitHubUser(gitHubUser);
@@ -36,11 +31,6 @@ public class GitHubUserProfileActivity extends AppCompatActivity {
                     .replace(R.id.activity_profile, gitHubUserProfileFragment)
                     .commit();
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     private void setActionBarTitle() {

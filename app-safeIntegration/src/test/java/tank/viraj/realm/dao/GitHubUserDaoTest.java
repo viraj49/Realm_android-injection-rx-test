@@ -25,8 +25,7 @@ import io.realm.RealmResults;
 import io.realm.internal.RealmCore;
 import tank.viraj.realm.BuildConfig;
 import tank.viraj.realm.MainApplicationTest;
-import tank.viraj.realm.jsonModel.GitHubUser;
-import tank.viraj.realm.realmModel.GitHubUserRealm;
+import tank.viraj.realm.model.GitHubUser;
 
 import static org.mockito.Matchers.any;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
@@ -61,23 +60,27 @@ public class GitHubUserDaoTest {
         doNothing().when(RealmCore.class);
         RealmCore.loadLibrary(any(Context.class));
         when(Realm.getDefaultInstance()).thenReturn(mockRealm);
-        when(mockRealm.createObject(GitHubUserRealm.class)).thenReturn(new GitHubUserRealm());
+        when(mockRealm.createObject(GitHubUser.class)).thenReturn(new GitHubUser());
+
 
         // GitHubUsers mock data
-        GitHubUserRealm p1 = new GitHubUserRealm(1, "testLogin1", "testName1");
-        GitHubUserRealm p2 = new GitHubUserRealm(2, "testLogin2", "testName2");
-        List<GitHubUserRealm> gitHubUserList = Arrays.asList(p1, p2);
+        GitHubUser p1 = new GitHubUser(1, "testLogin1", "testName1");
+        GitHubUser p2 = new GitHubUser(2, "testLogin2", "testName2");
+        List<GitHubUser> gitHubUserList = Arrays.asList(p1, p2);
 
         // Define how RealmQuery mock
-        RealmQuery<GitHubUserRealm> gitHubUserListQuery = mockRealmQuery();
-        when(mockRealm.where(GitHubUserRealm.class)).thenReturn(gitHubUserListQuery);
+        RealmQuery<GitHubUser> gitHubUserListQuery = mockRealmQuery();
+        when(mockRealm.where(GitHubUser.class)).thenReturn(gitHubUserListQuery);
 
-        // Result Mock
+        // Result mock
         mockStatic(RealmResults.class);
-        RealmResults<GitHubUserRealm> gitHubUserListResult = mockRealmResults();
-        when(mockRealm.where(GitHubUserRealm.class).findAll()).thenReturn(gitHubUserListResult);
+        RealmResults<GitHubUser> gitHubUserListResult = mockRealmResults();
+        when(mockRealm.where(GitHubUser.class).findAll()).thenReturn(gitHubUserListResult);
         when(gitHubUserListResult.iterator()).thenReturn(gitHubUserList.iterator());
         when(gitHubUserListResult.size()).thenReturn(gitHubUserList.size());
+
+        // copyFromRealm mock
+        when(mockRealm.copyFromRealm(gitHubUserListResult)).thenReturn(gitHubUserList);
 
         gitHubUserDao = new GitHubUserDao();
     }
@@ -93,26 +96,6 @@ public class GitHubUserDaoTest {
         Assert.assertEquals(2, gitHubUserListResult.get(1).getId());
         Assert.assertEquals("testLogin2", gitHubUserListResult.get(1).getLogin());
         Assert.assertEquals("testName2", gitHubUserListResult.get(1).getAvatar_url());
-    }
-
-    /* clear list of gitHubUserList */
-    @Test
-    public void clearGitHubUserListTest() {
-        List<GitHubUser> gitHubUserListResult = gitHubUserDao.getGitHubUserList();
-
-        Assert.assertEquals(2, gitHubUserListResult.size());
-        Assert.assertEquals(1, gitHubUserListResult.get(0).getId());
-        Assert.assertEquals("testLogin1", gitHubUserListResult.get(0).getLogin());
-        Assert.assertEquals("testName1", gitHubUserListResult.get(0).getAvatar_url());
-        Assert.assertEquals(2, gitHubUserListResult.get(1).getId());
-        Assert.assertEquals("testLogin2", gitHubUserListResult.get(1).getLogin());
-        Assert.assertEquals("testName2", gitHubUserListResult.get(1).getAvatar_url());
-
-        gitHubUserDao.clearDatabase();
-
-        gitHubUserListResult = gitHubUserDao.getGitHubUserList();
-
-        Assert.assertEquals(0, gitHubUserListResult.size());
     }
 
     @SuppressWarnings("unchecked")
