@@ -149,6 +149,7 @@ public class GitHubUserProfileFragment extends Fragment
             profileEmail.setVisibility(VISIBLE);
             Picasso.with(getActivity())
                     .load(gitHubUser.getAvatar_url())
+                    .placeholder(R.mipmap.ic_launcher)
                     .into(profileIcon);
             profileName.setText(String.format("%s%s", getActivity().getString(R.string.name), gitHubUserProfile.getName()));
             profileEmail.setText(String.format("%s%s", getActivity().getString(R.string.email), gitHubUserProfile.getEmail()));
@@ -156,7 +157,7 @@ public class GitHubUserProfileFragment extends Fragment
     }
 
     public void showSnackBar() {
-        Snackbar.make(pullToRefreshLayout, "No internet connection!", Snackbar.LENGTH_LONG)
+        Snackbar.make(pullToRefreshLayout, "Error loading data!", Snackbar.LENGTH_LONG)
                 .setAction("RETRY", view -> {
                     startRefreshAnimation();
                     gitHubUserProfilePresenter.getGitHubUserProfile(gitHubUser.getLogin(), true);

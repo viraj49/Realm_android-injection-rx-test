@@ -1,6 +1,5 @@
 package tank.viraj.realm.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,20 +19,17 @@ public class GitHubUserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         setActionBarTitle();
 
-        GitHubUserProfileFragment gitHubUserProfileFragment;
-
         /* get the GitHubUser object,
-         * create the fragment and load it in frame layout */
-        Intent intent = getIntent();
-        boolean commitFragment = intent.getBooleanExtra(FLAG_COMMIT_FRAGMENT, true);
-        if (savedInstanceState == null && commitFragment) {
+         * create/find the fragment and load it in frame layout */
+        GitHubUserProfileFragment gitHubUserProfileFragment = (GitHubUserProfileFragment) getSupportFragmentManager().findFragmentByTag(FLAG_COMMIT_FRAGMENT);
+        if (gitHubUserProfileFragment == null) {
             gitHubUserProfileFragment = new GitHubUserProfileFragment();
             String login = getIntent().getStringExtra(getString(R.string.github_user_login_key));
             String avatarUrl = getIntent().getStringExtra(getString(R.string.github_user_avatarUrl_key));
             gitHubUserProfileFragment.setGitHubUserData(login, avatarUrl);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.activity_profile, gitHubUserProfileFragment)
+                    .replace(R.id.activity_profile, gitHubUserProfileFragment, FLAG_COMMIT_FRAGMENT)
                     .commit();
         }
     }

@@ -1,7 +1,6 @@
 package tank.viraj.realm.injections;
 
 import android.app.Application;
-import android.content.Context;
 
 import javax.inject.Singleton;
 
@@ -36,7 +35,7 @@ public class ApplicationModule {
     @Provides
     @Singleton
     InternetConnection provideInternetConnection() {
-        return new InternetConnection();
+        return new InternetConnection(application);
     }
 
     @Provides
@@ -49,7 +48,7 @@ public class ApplicationModule {
     GitHubUserListDataSource provideGitHubUserListDataSource(GitHubApiInterface gitHubApiInterface,
                                                              InternetConnection internetConnection,
                                                              RxSchedulerConfiguration rxSchedulerConfiguration) {
-        return new GitHubUserListDataSource(application, gitHubApiInterface,
+        return new GitHubUserListDataSource(gitHubApiInterface,
                 internetConnection, rxSchedulerConfiguration);
     }
 
@@ -57,20 +56,22 @@ public class ApplicationModule {
     GitHubUserProfileDataSource provideGitHubUserProfileDataSource(GitHubApiInterface gitHubApiInterface,
                                                                    InternetConnection internetConnection,
                                                                    RxSchedulerConfiguration rxSchedulerConfiguration) {
-        return new GitHubUserProfileDataSource(application, gitHubApiInterface,
+        return new GitHubUserProfileDataSource(gitHubApiInterface,
                 internetConnection, rxSchedulerConfiguration);
     }
 
     @Provides
     GitHubUserListPresenter provideGitHubUserPresenter(RxSchedulerConfiguration rxSchedulerConfiguration,
-                                                       GitHubUserListDataSource gitHubUserListDataSource) {
-        return new GitHubUserListPresenter(rxSchedulerConfiguration, gitHubUserListDataSource);
+                                                       GitHubUserListDataSource gitHubUserListDataSource,
+                                                       InternetConnection internetConnection) {
+        return new GitHubUserListPresenter(rxSchedulerConfiguration, gitHubUserListDataSource, internetConnection);
     }
 
     @Provides
     GitHubUserProfilePresenter provideGitHubUserProfilePresenter(RxSchedulerConfiguration rxSchedulerConfiguration,
-                                                                 GitHubUserProfileDataSource gitHubUserProfileDataSource) {
-        return new GitHubUserProfilePresenter(rxSchedulerConfiguration, gitHubUserProfileDataSource);
+                                                                 GitHubUserProfileDataSource gitHubUserProfileDataSource,
+                                                                 InternetConnection internetConnection) {
+        return new GitHubUserProfilePresenter(rxSchedulerConfiguration, gitHubUserProfileDataSource, internetConnection);
     }
 
     @Provides

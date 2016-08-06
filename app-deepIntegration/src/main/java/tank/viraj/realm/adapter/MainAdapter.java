@@ -31,20 +31,41 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.GitHubViewHold
     }
 
     @Override
+    public int getItemViewType(int position) {
+        if (gitHubUserList.isEmpty()) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    @Override
     public GitHubViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View itemView = LayoutInflater.
-                from(viewGroup.getContext()).
-                inflate(R.layout.item_layout, viewGroup, false);
+        View itemView;
+        if (viewType == 0) {
+            itemView = LayoutInflater.
+                    from(viewGroup.getContext()).
+                    inflate(R.layout.empty_item_layout, viewGroup, false);
+        } else {
+            itemView = LayoutInflater.
+                    from(viewGroup.getContext()).
+                    inflate(R.layout.item_layout, viewGroup, false);
+        }
         return new GitHubViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(GitHubViewHolder gitHubViewHolder, int position) {
+        if (gitHubUserList.isEmpty()) {
+            return;
+        }
+
         gitHubViewHolder.vUserLogin.setText(gitHubUserList.get(position).getLogin());
         gitHubViewHolder.vUserId.setText(String.format(context.getString(R.string.userId),
                 gitHubUserList.get(position).getId()));
         Picasso.with(context)
                 .load(gitHubUserList.get(position).getAvatar_url())
+                .placeholder(R.mipmap.ic_launcher)
                 .resize(48, 48)
                 .centerCrop()
                 .into(gitHubViewHolder.vUserIcon);
@@ -52,6 +73,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.GitHubViewHold
 
     @Override
     public int getItemCount() {
+        if (gitHubUserList.isEmpty()) {
+            return 1;
+        }
         return gitHubUserList.size();
     }
 
@@ -73,6 +97,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.GitHubViewHold
 
         GitHubViewHolder(View v) {
             super(v);
+
+            if (gitHubUserList.isEmpty()) {
+                return;
+            }
+
             vUserIcon = (ImageView) v.findViewById(R.id.user_icon);
             vUserLogin = (TextView) v.findViewById(R.id.user_name);
             vUserId = (TextView) v.findViewById(R.id.user_type);

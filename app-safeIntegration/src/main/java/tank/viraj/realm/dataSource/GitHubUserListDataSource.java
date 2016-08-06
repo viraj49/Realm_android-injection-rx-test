@@ -34,7 +34,7 @@ public class GitHubUserListDataSource {
     }
 
     public Observable<List<GitHubUser>> getGitHubUserListHotSubscription() {
-        return gitHubUserListSubject.asObservable();
+        return gitHubUserListSubject.asObservable().serialize();
     }
 
     public void getGitHubUsers(boolean isForced) {

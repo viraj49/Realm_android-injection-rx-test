@@ -32,7 +32,7 @@ public class GitHubUserProfileDataSource {
     }
 
     public Observable<GitHubUserProfile> getGitHubUserProfileHotSubscription() {
-        return gitHubUserProfileSubject.asObservable();
+        return gitHubUserProfileSubject.asObservable().serialize();
     }
 
     public void getGitHubUserProfile(String login, boolean isForced) {
@@ -69,7 +69,6 @@ public class GitHubUserProfileDataSource {
 
     private Observable<GitHubUserProfile> getGitHubUserProfileFromRetrofit(String login) {
         return internetConnection.isInternetOnObservable()
-                .filter(status -> status)
                 .switchMap(connectionStatus -> connectionStatus ?
                         gitHubApiInterface.getGitHubUserProfile(login)
                                 .map(profile -> {

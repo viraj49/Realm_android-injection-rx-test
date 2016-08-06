@@ -9,90 +9,118 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/profile_icon"
+            <RelativeLayout
+                android:id="@+id/error_message_rl"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:contentDescription="@string/profile_icon"
-                android:scaleType="centerCrop" />
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/profile_name"
+                <TextView
+                    android:id="@+id/error_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="100dp"
+                    android:ellipsize="end"
+                    android:scrollHorizontally="true"
+                    android:text="@string/no_user_data_available"
+                    android:textAlignment="center"
+                    android:textColor="@color/text_charcoal_55"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/main_rl"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_below="@+id/profile_icon"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:gravity="center|start" />
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/profile_email"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_below="@+id/profile_name"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:gravity="center|start" />
+                <ImageView
+                    android:id="@+id/profile_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:contentDescription="@string/profile_icon"
+                    android:scaleType="centerCrop" />
 
-            <EditText
-                android:id="@+id/edit_id"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_below="@+id/profile_email"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:gravity="center|start"
-                android:hint="@string/enter_id"
-                android:inputType="number" />
+                <TextView
+                    android:id="@+id/profile_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_below="@+id/profile_icon"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center|start" />
 
-            <Button
-                android:id="@+id/button_id"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_below="@+id/edit_id"
-                android:layout_centerHorizontal="true"
-                android:text="@string/edit_id"
-                android:textAlignment="center" />
+                <TextView
+                    android:id="@+id/profile_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_below="@+id/profile_name"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginStart="16dp"
+                    android:gravity="center|start" />
 
-            <EditText
-                android:id="@+id/edit_name"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_below="@+id/button_id"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:gravity="center|start"
-                android:hint="@string/enter_name"
-                android:inputType="text" />
+                <EditText
+                    android:id="@+id/edit_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_below="@+id/profile_email"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginStart="16dp"
+                    android:gravity="center|start"
+                    android:hint="@string/enter_id"
+                    android:inputType="number" />
 
-            <Button
-                android:id="@+id/button_name"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_below="@+id/edit_name"
-                android:layout_centerHorizontal="true"
-                android:text="@string/edit_name"
-                android:textAlignment="center" />
+                <Button
+                    android:id="@+id/button_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_below="@+id/edit_id"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/edit_id"
+                    android:textAlignment="center" />
 
-        </RelativeLayout>
+                <EditText
+                    android:id="@+id/edit_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_below="@+id/button_id"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginStart="16dp"
+                    android:gravity="center|start"
+                    android:hint="@string/enter_name"
+                    android:inputType="text" />
+
+                <Button
+                    android:id="@+id/button_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_below="@+id/edit_name"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/edit_name"
+                    android:textAlignment="center" />
+
+            </RelativeLayout>
+        </LinearLayout>
     </ScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>

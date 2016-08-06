@@ -2,6 +2,8 @@ package tank.viraj.realm;
 
 import android.app.Application;
 
+import com.squareup.leakcanary.LeakCanary;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import tank.viraj.realm.injections.ApplicationComponent;
@@ -22,6 +24,9 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        /* Leak canary */
+        LeakCanary.install(this);
+
         initializeRealm();
 
         applicationComponent = DaggerApplicationComponent.builder()
@@ -39,11 +44,10 @@ public class MainApplication extends Application {
         }
 
         /* realmConfiguration */
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
+        Realm.setDefaultConfiguration(new RealmConfiguration.Builder(this)
                 .encryptionKey(key)
                 .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm.setDefaultConfiguration(realmConfiguration);
+                .build());
     }
 
     public ApplicationComponent getApplicationComponent() {

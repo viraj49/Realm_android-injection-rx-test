@@ -65,6 +65,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.GitHubViewHold
                 gitHubUserList.get(position).getId()));
         Picasso.with(context)
                 .load(gitHubUserList.get(position).getAvatar_url())
+                .placeholder(R.mipmap.ic_launcher)
                 .resize(48, 48)
                 .centerCrop()
                 .into(gitHubViewHolder.vUserIcon);
@@ -78,10 +79,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.GitHubViewHold
         return gitHubUserList.size();
     }
 
-    public void setDataList(List<GitHubUser> gitHubUserListIn) {
+    public void setDataList(List<GitHubUser> gitHubUserList) {
         this.gitHubUserList.clear();
-        this.gitHubUserList.addAll(gitHubUserListIn);
-
+        this.gitHubUserList.addAll(gitHubUserList);
         notifyDataSetChanged();
     }
 

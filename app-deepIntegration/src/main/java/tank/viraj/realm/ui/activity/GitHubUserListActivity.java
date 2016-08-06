@@ -1,6 +1,5 @@
 package tank.viraj.realm.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,13 +19,12 @@ public class GitHubUserListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setActionBarTitle();
 
-        /* create the fragment and load it in frame layout */
-        Intent intent = getIntent();
-        boolean commitFragment = intent.getBooleanExtra(FLAG_COMMIT_FRAGMENT, true);
-        if (savedInstanceState == null && commitFragment) {
+        /* create/find the fragment and load it in frame layout */
+        GitHubUserListFragment gitHubUserListFragment = (GitHubUserListFragment) getSupportFragmentManager().findFragmentByTag(FLAG_COMMIT_FRAGMENT);
+        if (gitHubUserListFragment == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.activity_main, new GitHubUserListFragment())
+                    .replace(R.id.activity_main, new GitHubUserListFragment(), FLAG_COMMIT_FRAGMENT)
                     .commit();
         }
     }

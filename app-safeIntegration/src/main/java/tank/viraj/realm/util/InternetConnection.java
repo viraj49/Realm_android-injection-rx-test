@@ -42,7 +42,7 @@ public class InternetConnection {
 
     public Observable<Boolean> getInternetStatusHotObservable() {
         internetStatusHotObservable = PublishSubject.create();
-        return internetStatusHotObservable.asObservable();
+        return internetStatusHotObservable.asObservable().serialize();
     }
 
     /* Register for Internet connection change broadcast receiver */

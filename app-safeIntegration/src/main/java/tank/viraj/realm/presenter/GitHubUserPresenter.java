@@ -68,6 +68,7 @@ public class GitHubUserPresenter {
                                 weakReferenceView.get().setDataList(new ArrayList<>());
                                 waitForInternetToComeBack();
                             }
+
                             weakReferenceView.get().showSnackBar();
                         } else {
                             weakReferenceView.get().setDataList(gitHubUserList);
@@ -87,7 +88,6 @@ public class GitHubUserPresenter {
         if (subscription != null && !subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
-        this.weakReferenceView = null;
     }
 
     private void waitForInternetToComeBack() {

@@ -145,7 +145,7 @@ public class GitHubUserListFragment extends Fragment
     }
 
     public void showSnackBar() {
-        Snackbar.make(pullToRefreshLayout, "No internet connection!", Snackbar.LENGTH_LONG)
+        Snackbar.make(pullToRefreshLayout, "Error loading data!", Snackbar.LENGTH_LONG)
                 .setAction("RETRY", view -> {
                     startRefreshAnimation();
                     gitHubUserPresenter.getGitHubUsers(true);

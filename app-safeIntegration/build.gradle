@@ -66,6 +66,7 @@ dependencies {
     /* picasso - for loading and caching images */
     compile 'com.squareup.picasso:picasso:2.5.2'
 
+    /* leak Canary - for memory leak detection */
     compile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
 
     /* TESTING */

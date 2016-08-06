@@ -1,6 +1,7 @@
 package tank.viraj.realm.ui.fragment;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,9 @@ import tank.viraj.realm.MainApplication;
 import tank.viraj.realm.R;
 import tank.viraj.realm.model.GitHubUserProfile;
 import tank.viraj.realm.presenter.GitHubUserProfilePresenter;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 /**
  * Created by Viraj Tank, 18-06-2016.
@@ -57,9 +62,16 @@ public class GitHubUserProfileFragment extends Fragment
     @BindView(R.id.refresh_profile)
     SwipeRefreshLayout pullToRefreshLayout;
 
+    @BindView(R.id.error_message_rl)
+    RelativeLayout errorMessageRl;
+
+    @BindView(R.id.main_rl)
+    RelativeLayout mainRl;
+
     private String login;
     private String avatarUrl;
     private Unbinder unbinder;
+    private GitHubUserProfile gitHubUserProfile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,11 +153,33 @@ public class GitHubUserProfileFragment extends Fragment
     }
 
     public void setData(GitHubUserProfile gitHubUserProfile) {
-        Picasso.with(GitHubUserProfileFragment.this.getActivity())
-                .load(avatarUrl)
-                .into(profileIcon);
-        profileName.setText(String.format("%s%s", GitHubUserProfileFragment.this.getActivity().getString(R.string.name), gitHubUserProfile.getName()));
-        profileEmail.setText(String.format("%s%s", GitHubUserProfileFragment.this.getActivity().getString(R.string.email), gitHubUserProfile.getEmail()));
+        this.gitHubUserProfile = gitHubUserProfile;
+        loadData();
+    }
+
+    public void loadData() {
+        if (gitHubUserProfile.getName().contains("default")) {
+            errorMessageRl.setVisibility(VISIBLE);
+            mainRl.setVisibility(GONE);
+        } else {
+            errorMessageRl.setVisibility(GONE);
+            mainRl.setVisibility(VISIBLE);
+
+            Picasso.with(GitHubUserProfileFragment.this.getActivity())
+                    .load(avatarUrl)
+                    .placeholder(R.mipmap.ic_launcher)
+                    .into(profileIcon);
+            profileName.setText(String.format("%s%s", GitHubUserProfileFragment.this.getActivity().getString(R.string.name), gitHubUserProfile.getName()));
+            profileEmail.setText(String.format("%s%s", GitHubUserProfileFragment.this.getActivity().getString(R.string.email), gitHubUserProfile.getEmail()));
+        }
+    }
+
+    public void showSnackBar() {
+        Snackbar.make(pullToRefreshLayout, "Error loading data!", Snackbar.LENGTH_LONG)
+                .setAction("RETRY", view -> {
+                    startRefreshAnimation();
+                    gitHubUserProfilePresenter.loadGitHubUserProfile(login, true);
+                }).show();
     }
 
     @Override

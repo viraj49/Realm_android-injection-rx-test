@@ -3,6 +3,7 @@ package tank.viraj.realm.ui.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -120,6 +121,14 @@ public class GitHubUserListFragment extends Fragment
 
     public void setDataList(List<GitHubUser> gitHubUserList) {
         mainAdapter.setDataList(gitHubUserList);
+    }
+
+    public void showSnackBar() {
+        Snackbar.make(pullToRefreshLayout, "Error loading data!", Snackbar.LENGTH_LONG)
+                .setAction("RETRY", view -> {
+                    startRefreshAnimation();
+                    gitHubUserListPresenter.loadGitHubUserList(true);
+                }).show();
     }
 
     @Override

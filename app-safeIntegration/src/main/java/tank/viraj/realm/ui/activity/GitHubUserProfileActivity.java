@@ -20,15 +20,16 @@ public class GitHubUserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         setActionBarTitle();
 
-        /* create the fragment and load it in frame layout */
-        if (savedInstanceState == null) {
-            GitHubUserProfileFragment gitHubUserProfileFragment = new GitHubUserProfileFragment();
+        /* create/find the fragment and load it in frame layout */
+        GitHubUserProfileFragment gitHubUserProfileFragment = (GitHubUserProfileFragment) getSupportFragmentManager().findFragmentByTag(FLAG_COMMIT_FRAGMENT);
+        if (gitHubUserProfileFragment == null) {
+            gitHubUserProfileFragment = new GitHubUserProfileFragment();
             GitHubUser gitHubUser = (GitHubUser) getIntent()
                     .getSerializableExtra(getString(R.string.github_user_key));
             gitHubUserProfileFragment.setGitHubUser(gitHubUser);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.activity_profile, gitHubUserProfileFragment)
+                    .replace(R.id.activity_profile, gitHubUserProfileFragment, FLAG_COMMIT_FRAGMENT)
                     .commit();
         }
     }

@@ -43,10 +43,8 @@ public class GitHubUserProfilePresenter {
 
         loadGitHubUserProfile(login);
 
-        if (!isViewLoadedAtLeastOnce) {
-            if (!areWeLoadingSomething) {
-                getGitHubUserProfile(login, isForced);
-            }
+        if (!isViewLoadedAtLeastOnce && !areWeLoadingSomething) {
+            getGitHubUserProfile(login, isForced);
         } else {
             weakReferenceView.get().loadData();
         }
@@ -73,10 +71,10 @@ public class GitHubUserProfilePresenter {
                             weakReferenceView.get().showSnackBar();
                         } else {
                             weakReferenceView.get().setData(gitHubUserProfile);
+                            isViewLoadedAtLeastOnce = true;
                         }
 
                         weakReferenceView.get().stopRefreshAnimation();
-                        isViewLoadedAtLeastOnce = true;
                         areWeLoadingSomething = false;
                     }, error -> {
                         weakReferenceView.get().stopRefreshAnimation();
