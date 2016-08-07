@@ -16,7 +16,7 @@ public class GitHubUserProfilePresenter {
     private WeakReference<GitHubUserProfileFragment> weakReferenceView;
     private GitHubUserProfileDataSource gitHubUserProfileDataSource;
     private RxSchedulerConfiguration rxSchedulerConfiguration;
-    private Subscription subscription;
+    private Subscription gitHubUserProfileViewSubscription;
     private Subscription internetStatusSubscription;
     private InternetConnection internetConnection;
     private boolean isViewLoadedAtLeastOnce;
@@ -56,8 +56,8 @@ public class GitHubUserProfilePresenter {
     }
 
     private void loadGitHubUserProfile(String login) {
-        if (subscription == null || subscription.isUnsubscribed()) {
-            subscription = gitHubUserProfileDataSource.getGitHubUserProfileHotSubscription()
+        if (gitHubUserProfileViewSubscription == null || gitHubUserProfileViewSubscription.isUnsubscribed()) {
+            gitHubUserProfileViewSubscription = gitHubUserProfileDataSource.getGitHubUserProfileDataSubscription()
                     .onBackpressureDrop()
                     .subscribeOn(rxSchedulerConfiguration.getComputationThread())
                     .observeOn(rxSchedulerConfiguration.getMainThread())
@@ -88,8 +88,8 @@ public class GitHubUserProfilePresenter {
     }
 
     public void unBind() {
-        if (subscription != null && !subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
+        if (gitHubUserProfileViewSubscription != null && !gitHubUserProfileViewSubscription.isUnsubscribed()) {
+            gitHubUserProfileViewSubscription.unsubscribe();
         }
         this.weakReferenceView = null;
     }

@@ -2,7 +2,6 @@ package tank.viraj.realm.dataSource;
 
 import io.realm.Realm;
 import rx.Observable;
-import rx.functions.Func1;
 import tank.viraj.realm.model.GitHubUser;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
 import tank.viraj.realm.util.InternetConnection;
@@ -40,14 +39,9 @@ public class GitHubUserListDataSource {
         return Observable.just(isForced)
                 .filter(isForcedIn -> !isForcedIn)
                 .observeOn(rxSchedulerConfiguration.getMainThread())
-                .map(new Func1<Boolean, statusCodes>() {
-                    @Override
-                    public statusCodes call(Boolean isForcedIn) {
-                        return (GitHubUserListDataSource.this.realm.where(GitHubUser.class).findAll().size() > 0) ?
-                                statusCodes.GITHUB_USER_LIST_AVAILABLE :
-                                statusCodes.GITHUB_USER_LIST_NOT_AVAILABLE;
-                    }
-                });
+                .map(isForcedIn -> (GitHubUserListDataSource.this.realm.where(GitHubUser.class).findAll().size() > 0) ?
+                        statusCodes.GITHUB_USER_LIST_AVAILABLE :
+                        statusCodes.GITHUB_USER_LIST_NOT_AVAILABLE);
     }
 
     private Observable<statusCodes> getGitHubUsersFromRetrofit() {

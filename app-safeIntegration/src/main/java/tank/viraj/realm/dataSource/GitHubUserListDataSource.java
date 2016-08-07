@@ -20,7 +20,7 @@ public class GitHubUserListDataSource {
     private GitHubUserDao gitHubUserDao;
     private InternetConnection internetConnection;
     private PublishSubject<List<GitHubUser>> gitHubUserListSubject;
-    private Subscription gitHubUserListHotSubscription;
+    private Subscription gitHubUserListDataSubscription;
     private RxSchedulerConfiguration rxSchedulerConfiguration;
 
     public GitHubUserListDataSource(GitHubApiInterface gitHubApiInterface,
@@ -33,20 +33,20 @@ public class GitHubUserListDataSource {
         this.gitHubUserListSubject = PublishSubject.create();
     }
 
-    public Observable<List<GitHubUser>> getGitHubUserListHotSubscription() {
+    public Observable<List<GitHubUser>> getGitHubUserListDataSubscription() {
         return gitHubUserListSubject.asObservable().serialize();
     }
 
     public void getGitHubUsers(boolean isForced) {
-        if (gitHubUserListHotSubscription == null || gitHubUserListHotSubscription.isUnsubscribed() || isForced) {
+        if (gitHubUserListDataSubscription == null || gitHubUserListDataSubscription.isUnsubscribed() || isForced) {
             /* This is not needed here, since pullToRefresh will not trigger onRefresh()
                a second time as long as we don't stop the animation, this is to demonstrate
                how it can be done */
-            if (gitHubUserListHotSubscription != null && !gitHubUserListHotSubscription.isUnsubscribed()) {
-                gitHubUserListHotSubscription.unsubscribe();
+            if (gitHubUserListDataSubscription != null && !gitHubUserListDataSubscription.isUnsubscribed()) {
+                gitHubUserListDataSubscription.unsubscribe();
             }
 
-            gitHubUserListHotSubscription = Observable.concat(
+            gitHubUserListDataSubscription = Observable.concat(
                     getGitHubUsersFromRealm(isForced),
                     getGitHubUsersFromRetrofit(),
                     getDefaultResponse())
@@ -92,8 +92,8 @@ public class GitHubUserListDataSource {
     }
 
     public void unSubscribeHotSubscription() {
-        if (gitHubUserListHotSubscription != null && !gitHubUserListHotSubscription.isUnsubscribed()) {
-            gitHubUserListHotSubscription.unsubscribe();
+        if (gitHubUserListDataSubscription != null && !gitHubUserListDataSubscription.isUnsubscribed()) {
+            gitHubUserListDataSubscription.unsubscribe();
         }
     }
 }

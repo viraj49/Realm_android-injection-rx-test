@@ -17,7 +17,7 @@ public class GitHubUserProfileDataSource {
     private GitHubUserProfileDao gitHubUserProfileDao;
     private InternetConnection internetConnection;
     private PublishSubject<GitHubUserProfile> gitHubUserProfileSubject;
-    private Subscription gitHubUserProfileHotSubscription;
+    private Subscription gitHubUserProfileDataSubscription;
     private RxSchedulerConfiguration rxSchedulerConfiguration;
 
     public GitHubUserProfileDataSource(GitHubApiInterface gitHubApiInterface,
@@ -31,20 +31,20 @@ public class GitHubUserProfileDataSource {
         this.gitHubUserProfileSubject = PublishSubject.create();
     }
 
-    public Observable<GitHubUserProfile> getGitHubUserProfileHotSubscription() {
+    public Observable<GitHubUserProfile> getGitHubUserProfileDataSubscription() {
         return gitHubUserProfileSubject.asObservable().serialize();
     }
 
     public void getGitHubUserProfile(String login, boolean isForced) {
-        if (gitHubUserProfileHotSubscription == null || gitHubUserProfileHotSubscription.isUnsubscribed() || isForced) {
+        if (gitHubUserProfileDataSubscription == null || gitHubUserProfileDataSubscription.isUnsubscribed() || isForced) {
             /* This is not needed here, since pullToRefresh will not trigger onRefresh()
                a second time as long as we don't stop the animation, this is to demonstrate
                how it can be done */
-            if (gitHubUserProfileHotSubscription != null && !gitHubUserProfileHotSubscription.isUnsubscribed()) {
-                gitHubUserProfileHotSubscription.unsubscribe();
+            if (gitHubUserProfileDataSubscription != null && !gitHubUserProfileDataSubscription.isUnsubscribed()) {
+                gitHubUserProfileDataSubscription.unsubscribe();
             }
 
-            gitHubUserProfileHotSubscription = Observable.concat(
+            gitHubUserProfileDataSubscription = Observable.concat(
                     getGitHubUserProfileFromRealm(login, isForced),
                     getGitHubUserProfileFromRetrofit(login),
                     getDefaultResponse())
@@ -88,8 +88,8 @@ public class GitHubUserProfileDataSource {
     }
 
     public void unSubscribe() {
-        if (gitHubUserProfileHotSubscription != null && !gitHubUserProfileHotSubscription.isUnsubscribed()) {
-            gitHubUserProfileHotSubscription.unsubscribe();
+        if (gitHubUserProfileDataSubscription != null && !gitHubUserProfileDataSubscription.isUnsubscribed()) {
+            gitHubUserProfileDataSubscription.unsubscribe();
         }
     }
 }

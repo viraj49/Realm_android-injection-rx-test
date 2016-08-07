@@ -107,9 +107,8 @@ public class GitHubUserProfileFragment extends Fragment
             }
         });
 
-        buttonName.setOnClickListener(view1 -> {
-            gitHubUserProfilePresenter.editUserName(login, editName.getText().toString());
-        });
+        buttonName.setOnClickListener(view1 -> gitHubUserProfilePresenter
+                .editUserName(login, editName.getText().toString()));
 
         /* bind the view and load data from Realm */
         gitHubUserProfilePresenter.bind(this, login, false);
@@ -158,19 +157,21 @@ public class GitHubUserProfileFragment extends Fragment
     }
 
     public void loadData() {
-        if (gitHubUserProfile.getName().contains("default")) {
-            errorMessageRl.setVisibility(VISIBLE);
-            mainRl.setVisibility(GONE);
-        } else {
-            errorMessageRl.setVisibility(GONE);
-            mainRl.setVisibility(VISIBLE);
+        if (gitHubUserProfile != null) {
+            if (gitHubUserProfile.getName().contains("default")) {
+                errorMessageRl.setVisibility(VISIBLE);
+                mainRl.setVisibility(GONE);
+            } else {
+                errorMessageRl.setVisibility(GONE);
+                mainRl.setVisibility(VISIBLE);
 
-            Picasso.with(GitHubUserProfileFragment.this.getActivity())
-                    .load(avatarUrl)
-                    .placeholder(R.mipmap.ic_launcher)
-                    .into(profileIcon);
-            profileName.setText(String.format("%s%s", GitHubUserProfileFragment.this.getActivity().getString(R.string.name), gitHubUserProfile.getName()));
-            profileEmail.setText(String.format("%s%s", GitHubUserProfileFragment.this.getActivity().getString(R.string.email), gitHubUserProfile.getEmail()));
+                Picasso.with(GitHubUserProfileFragment.this.getActivity())
+                        .load(avatarUrl)
+                        .placeholder(R.mipmap.ic_launcher)
+                        .into(profileIcon);
+                profileName.setText(String.format("%s%s", GitHubUserProfileFragment.this.getActivity().getString(R.string.name), gitHubUserProfile.getName()));
+                profileEmail.setText(String.format("%s%s", GitHubUserProfileFragment.this.getActivity().getString(R.string.email), gitHubUserProfile.getEmail()));
+            }
         }
     }
 

@@ -20,10 +20,10 @@ import static tank.viraj.realm.util.StatusCodes.statusCodes;
 public class GitHubUserProfilePresenter {
     private Realm realm;
     private WeakReference<GitHubUserProfileFragment> weakReferenceView;
-    private Subscription subscription;
-    private InternetConnection internetConnection;
+    private Subscription gitHubUserProfileViewSubscription;
+    private Subscription gitHubUserProfileDataSubscription;
     private Subscription internetStatusSubscription;
-    private Subscription gitHubUserProfileHotSubscription;
+    private InternetConnection internetConnection;
     private RxSchedulerConfiguration rxSchedulerConfiguration;
     private GitHubUserProfileDataSource gitHubUserProfileDataSource;
     private boolean isViewLoadedAtLeastOnce;
@@ -40,17 +40,17 @@ public class GitHubUserProfilePresenter {
     }
 
     public void loadGitHubUserProfile(String login, boolean isForced) {
-        if (gitHubUserProfileHotSubscription == null || gitHubUserProfileHotSubscription.isUnsubscribed() || isForced) {
+        if (gitHubUserProfileDataSubscription == null || gitHubUserProfileDataSubscription.isUnsubscribed() || isForced) {
             /* This is not needed here, since pullToRefresh will not trigger onRefresh()
                a second time as long as we don't stop the animation, this is to demonstrate
                how it can be done */
-            if (gitHubUserProfileHotSubscription != null && !gitHubUserProfileHotSubscription.isUnsubscribed()) {
-                gitHubUserProfileHotSubscription.unsubscribe();
+            if (gitHubUserProfileDataSubscription != null && !gitHubUserProfileDataSubscription.isUnsubscribed()) {
+                gitHubUserProfileDataSubscription.unsubscribe();
             }
 
             areWeLoadingSomething = true;
 
-            gitHubUserProfileHotSubscription = gitHubUserProfileDataSource.getGitHubUserProfile(login, isForced)
+            gitHubUserProfileDataSubscription = gitHubUserProfileDataSource.getGitHubUserProfile(login, isForced)
                     .subscribe(gitHubUserProfileStatus -> {
                         if (gitHubUserProfileStatus == statusCodes.DEFAULT_RESPONSE) {
                             if (!isViewLoadedAtLeastOnce) {
@@ -106,8 +106,8 @@ public class GitHubUserProfilePresenter {
             weakReferenceView.get().startRefreshAnimation();
         }
 
-        if (subscription == null || subscription.isUnsubscribed()) {
-            subscription = realm.where(GitHubUserProfile.class)
+        if (gitHubUserProfileViewSubscription == null || gitHubUserProfileViewSubscription.isUnsubscribed()) {
+            gitHubUserProfileViewSubscription = realm.where(GitHubUserProfile.class)
                     .equalTo("login", login)
                     .findFirstAsync()
                     .asObservable()
@@ -128,10 +128,11 @@ public class GitHubUserProfilePresenter {
     }
 
     public void unBind() {
-        if (subscription != null && !subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
+        if (gitHubUserProfileViewSubscription != null && !gitHubUserProfileViewSubscription.isUnsubscribed()) {
+            gitHubUserProfileViewSubscription.unsubscribe();
         }
 
+        realm.removeAllChangeListeners();
         realm.close();
         this.weakReferenceView = null;
     }
@@ -159,8 +160,8 @@ public class GitHubUserProfilePresenter {
     }
 
     public void unSubscribe() {
-        if (gitHubUserProfileHotSubscription != null && !gitHubUserProfileHotSubscription.isUnsubscribed()) {
-            gitHubUserProfileHotSubscription.unsubscribe();
+        if (gitHubUserProfileDataSubscription != null && !gitHubUserProfileDataSubscription.isUnsubscribed()) {
+            gitHubUserProfileDataSubscription.unsubscribe();
         }
 
         gitHubUserProfileDataSource.unSubscribe();

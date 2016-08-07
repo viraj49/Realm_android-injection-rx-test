@@ -62,7 +62,7 @@ public class GitHubUserProfileDataSourceTest {
                 .thenReturn(Observable.just(gitHubUserProfile));
 
         TestSubscriber<GitHubUserProfile> testSubscriber = new TestSubscriber<>();
-        gitHubUserProfileDataSource.getGitHubUserProfileHotSubscription()
+        gitHubUserProfileDataSource.getGitHubUserProfileDataSubscription()
                 .subscribe(testSubscriber);
         gitHubUserProfileDataSource.getGitHubUserProfile("testLogin", false);
 
@@ -83,7 +83,7 @@ public class GitHubUserProfileDataSourceTest {
                 .thenReturn(Observable.just(gitHubUserProfile));
 
         TestSubscriber<GitHubUserProfile> testSubscriber = new TestSubscriber<>();
-        gitHubUserProfileDataSource.getGitHubUserProfileHotSubscription()
+        gitHubUserProfileDataSource.getGitHubUserProfileDataSubscription()
                 .subscribe(testSubscriber);
         gitHubUserProfileDataSource.getGitHubUserProfile("testLogin", true);
 

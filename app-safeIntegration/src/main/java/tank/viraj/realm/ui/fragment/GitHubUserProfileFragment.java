@@ -137,22 +137,24 @@ public class GitHubUserProfileFragment extends Fragment
     }
 
     public void loadData() {
-        if (gitHubUserProfile.getName().contains("default")) {
-            errorMessage.setVisibility(VISIBLE);
-            profileIcon.setVisibility(GONE);
-            profileName.setVisibility(GONE);
-            profileEmail.setVisibility(GONE);
-        } else {
-            errorMessage.setVisibility(GONE);
-            profileIcon.setVisibility(VISIBLE);
-            profileName.setVisibility(VISIBLE);
-            profileEmail.setVisibility(VISIBLE);
-            Picasso.with(getActivity())
-                    .load(gitHubUser.getAvatar_url())
-                    .placeholder(R.mipmap.ic_launcher)
-                    .into(profileIcon);
-            profileName.setText(String.format("%s%s", getActivity().getString(R.string.name), gitHubUserProfile.getName()));
-            profileEmail.setText(String.format("%s%s", getActivity().getString(R.string.email), gitHubUserProfile.getEmail()));
+        if (gitHubUserProfile != null) {
+            if (gitHubUserProfile.getName().contains("default")) {
+                errorMessage.setVisibility(VISIBLE);
+                profileIcon.setVisibility(GONE);
+                profileName.setVisibility(GONE);
+                profileEmail.setVisibility(GONE);
+            } else {
+                errorMessage.setVisibility(GONE);
+                profileIcon.setVisibility(VISIBLE);
+                profileName.setVisibility(VISIBLE);
+                profileEmail.setVisibility(VISIBLE);
+                Picasso.with(getActivity())
+                        .load(gitHubUser.getAvatar_url())
+                        .placeholder(R.mipmap.ic_launcher)
+                        .into(profileIcon);
+                profileName.setText(String.format("%s%s", getActivity().getString(R.string.name), gitHubUserProfile.getName()));
+                profileEmail.setText(String.format("%s%s", getActivity().getString(R.string.email), gitHubUserProfile.getEmail()));
+            }
         }
     }
 

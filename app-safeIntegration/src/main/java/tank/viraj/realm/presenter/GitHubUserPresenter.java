@@ -16,7 +16,7 @@ import tank.viraj.realm.util.RxSchedulerConfiguration;
 public class GitHubUserPresenter {
     private WeakReference<GitHubUserListFragment> weakReferenceView;
     private GitHubUserListDataSource gitHubUserListDataSource;
-    private Subscription subscription;
+    private Subscription gitHubUserListViewSubscription;
     private Subscription internetStatusSubscription;
     private RxSchedulerConfiguration rxSchedulerConfiguration;
     private InternetConnection internetConnection;
@@ -57,8 +57,8 @@ public class GitHubUserPresenter {
     }
 
     private void loadGitHubUserList() {
-        if (subscription == null || subscription.isUnsubscribed()) {
-            subscription = gitHubUserListDataSource.getGitHubUserListHotSubscription()
+        if (gitHubUserListViewSubscription == null || gitHubUserListViewSubscription.isUnsubscribed()) {
+            gitHubUserListViewSubscription = gitHubUserListDataSource.getGitHubUserListDataSubscription()
                     .onBackpressureDrop()
                     .subscribeOn(rxSchedulerConfiguration.getComputationThread())
                     .observeOn(rxSchedulerConfiguration.getMainThread())
@@ -85,8 +85,8 @@ public class GitHubUserPresenter {
     }
 
     public void unBind() {
-        if (subscription != null && !subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
+        if (gitHubUserListViewSubscription != null && !gitHubUserListViewSubscription.isUnsubscribed()) {
+            gitHubUserListViewSubscription.unsubscribe();
         }
     }
 

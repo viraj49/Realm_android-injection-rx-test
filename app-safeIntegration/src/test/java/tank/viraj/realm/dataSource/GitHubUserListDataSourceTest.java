@@ -66,7 +66,7 @@ public class GitHubUserListDataSourceTest {
         Mockito.when(internetConnection.isInternetOnObservable())
                 .thenReturn(Observable.just(true));
         TestSubscriber<List<GitHubUser>> testSubscriber = new TestSubscriber<>();
-        gitHubUserListDataSource.getGitHubUserListHotSubscription()
+        gitHubUserListDataSource.getGitHubUserListDataSubscription()
                 .subscribe(testSubscriber);
         gitHubUserListDataSource.getGitHubUsers(false);
 
@@ -86,7 +86,7 @@ public class GitHubUserListDataSourceTest {
         Mockito.when(internetConnection.isInternetOnObservable())
                 .thenReturn(Observable.just(true));
         TestSubscriber<List<GitHubUser>> testSubscriber = new TestSubscriber<>();
-        gitHubUserListDataSource.getGitHubUserListHotSubscription()
+        gitHubUserListDataSource.getGitHubUserListDataSubscription()
                 .subscribe(testSubscriber);
         gitHubUserListDataSource.getGitHubUsers(true);
 
