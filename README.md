@@ -18,5 +18,6 @@ Both approaches are in comibation of following,
 - Picasso
 - UnitTesting
 
-A detailed description on where we should subscribe & unsubscribe is availabe on this Medium post:
+A detailed description on where we should subscribe & unsubscribe is availabe on this Medium post series:
 https://medium.com/@Viraj.Tank/art-of-subscribe-unsubscribe-in-rxjava-12c30d315777
+https://medium.com/@Viraj.Tank/android-mvp-that-survives-view-life-cycle-configuration-internet-changes-part-2-6b1e2b5c5294
