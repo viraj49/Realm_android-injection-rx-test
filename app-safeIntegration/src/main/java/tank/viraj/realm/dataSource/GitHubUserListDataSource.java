@@ -29,8 +29,8 @@ public class GitHubUserListDataSource {
         this.gitHubApiInterface = gitHubApiInterface;
         this.gitHubUserDao = gitHubUserDao;
         this.internetConnection = internetConnection;
-        this.rxSchedulerConfiguration = rxSchedulerConfiguration;
         this.gitHubUserListSubject = PublishSubject.create();
+        this.rxSchedulerConfiguration = rxSchedulerConfiguration;
     }
 
     public Observable<List<GitHubUser>> getGitHubUserListDataSubscription() {
@@ -52,7 +52,7 @@ public class GitHubUserListDataSource {
                     getDefaultResponse())
                     .takeFirst(gitHubUserList -> gitHubUserList != null && gitHubUserList.size() > 0)
                     .subscribeOn(rxSchedulerConfiguration.getComputationThread())
-                    .observeOn(rxSchedulerConfiguration.getMainThread())
+                    .subscribeOn(rxSchedulerConfiguration.getComputationThread())
                     .subscribe(gitHubUserList -> gitHubUserListSubject.onNext(gitHubUserList),
                             error -> gitHubUserListSubject.onNext(getDefaultGitHubUserList())
                     );
@@ -67,13 +67,17 @@ public class GitHubUserListDataSource {
 
     private Observable<List<GitHubUser>> getGitHubUsersFromRetrofit() {
         return internetConnection.isInternetOnObservable()
-                .switchMap(connectionStatus -> connectionStatus ?
-                        gitHubApiInterface.getGitHubUsersList()
+                .switchMap(connectionStatus -> {
+                    if (connectionStatus) {
+                        return gitHubApiInterface.getGitHubUsersList()
                                 .map(gitHubUserList -> {
                                     gitHubUserDao.storeOrUpdateGitHubUserList(gitHubUserList);
                                     return gitHubUserList;
-                                })
-                        : Observable.empty());
+                                });
+                    } else {
+                        return Observable.empty();
+                    }
+                });
     }
 
     private Observable<List<GitHubUser>> getDefaultResponse() {

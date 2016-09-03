@@ -1,5 +1,6 @@
 package tank.viraj.realm.presenter;
 
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -51,6 +52,8 @@ public class GitHubUserListPresenter {
             areWeLoadingSomething = true;
 
             gitHubUserListDataSubscription = gitHubUserListDataSource.getGitHubUsers(isForced)
+                    .subscribeOn(rxSchedulerConfiguration.getComputationThread())
+                    .observeOn(rxSchedulerConfiguration.getMainThread())
                     .subscribe(userListSize -> {
                                 if (userListSize == statusCodes.DEFAULT_RESPONSE) {
                                     if (!isViewLoadedAtLeastOnce) {
@@ -92,7 +95,6 @@ public class GitHubUserListPresenter {
                     .filter(RealmResults::isLoaded)
                     .filter(RealmResults::isValid)
                     .filter(realmResults -> realmResults.size() > 0)
-                    .observeOn(rxSchedulerConfiguration.getMainThread())
                     .subscribe(gitHubUsers -> weakReferenceView.get().setDataList(gitHubUsers)
                             , error -> weakReferenceView.get().stopRefreshAnimation());
         }
@@ -107,8 +109,6 @@ public class GitHubUserListPresenter {
             gitHubUserListViewSubscription.unsubscribe();
         }
 
-        realm.removeAllChangeListeners();
-        realm.close();
         this.weakReferenceView = null;
     }
 
@@ -139,7 +139,9 @@ public class GitHubUserListPresenter {
             gitHubUserListDataSubscription.unsubscribe();
         }
 
-        gitHubUserListDataSource.unSubscribe();
+        realm.removeAllChangeListeners();
+        realm.close();
+
         stopWaitForInternetToComeBack();
     }
 }

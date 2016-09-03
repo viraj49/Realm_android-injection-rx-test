@@ -1,11 +1,9 @@
 package tank.viraj.realm.dataSource;
 
-import io.realm.Realm;
 import rx.Observable;
-import tank.viraj.realm.model.GitHubUser;
+import tank.viraj.realm.dao.GitHubUserDao;
 import tank.viraj.realm.retrofit.GitHubApiInterface;
 import tank.viraj.realm.util.InternetConnection;
-import tank.viraj.realm.util.RxSchedulerConfiguration;
 
 import static tank.viraj.realm.util.StatusCodes.statusCodes;
 
@@ -13,18 +11,16 @@ import static tank.viraj.realm.util.StatusCodes.statusCodes;
  * Created by Viraj Tank, 18-06-2016.
  */
 public class GitHubUserListDataSource {
-    private Realm realm;
     private GitHubApiInterface gitHubApiInterface;
     private InternetConnection internetConnection;
-    private RxSchedulerConfiguration rxSchedulerConfiguration;
+    private GitHubUserDao gitHubUserDao;
 
     public GitHubUserListDataSource(GitHubApiInterface gitHubApiInterface,
                                     InternetConnection internetConnection,
-                                    RxSchedulerConfiguration rxSchedulerConfiguration) {
+                                    GitHubUserDao gitHubUserDao) {
+        this.gitHubUserDao = gitHubUserDao;
         this.gitHubApiInterface = gitHubApiInterface;
         this.internetConnection = internetConnection;
-        this.rxSchedulerConfiguration = rxSchedulerConfiguration;
-        this.realm = Realm.getDefaultInstance();
     }
 
     public Observable<statusCodes> getGitHubUsers(boolean isForced) {
@@ -38,8 +34,7 @@ public class GitHubUserListDataSource {
     private Observable<statusCodes> getGitHubUsersFromRealm(boolean isForced) {
         return Observable.just(isForced)
                 .filter(isForcedIn -> !isForcedIn)
-                .observeOn(rxSchedulerConfiguration.getMainThread())
-                .map(isForcedIn -> (GitHubUserListDataSource.this.realm.where(GitHubUser.class).findAll().size() > 0) ?
+                .map(isForcedIn -> (gitHubUserDao.getGitHubUserListStatus()) ?
                         statusCodes.GITHUB_USER_LIST_AVAILABLE :
                         statusCodes.GITHUB_USER_LIST_NOT_AVAILABLE);
     }
@@ -48,10 +43,8 @@ public class GitHubUserListDataSource {
         return internetConnection.isInternetOnObservable()
                 .filter(connectionStatus -> connectionStatus)
                 .switchMap(connectionStatus -> gitHubApiInterface.getGitHubUsersList())
-                .subscribeOn(rxSchedulerConfiguration.getComputationThread())
-                .observeOn(rxSchedulerConfiguration.getMainThread())
                 .map(gitHubUserList -> {
-                    realm.executeTransactionAsync(realm -> realm.copyToRealmOrUpdate(gitHubUserList));
+                    gitHubUserDao.storeOrUpdateGitHubUserList(gitHubUserList);
                     return gitHubUserList.size() > 0 ?
                             statusCodes.GITHUB_USER_LIST_AVAILABLE :
                             statusCodes.GITHUB_USER_LIST_NOT_AVAILABLE;
@@ -60,9 +53,5 @@ public class GitHubUserListDataSource {
 
     private Observable<statusCodes> getDefaultResponse() {
         return Observable.just(statusCodes.DEFAULT_RESPONSE);
-    }
-
-    public void unSubscribe() {
-        realm.close();
     }
 }

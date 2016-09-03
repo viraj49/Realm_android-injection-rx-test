@@ -51,6 +51,8 @@ public class GitHubUserProfilePresenter {
             areWeLoadingSomething = true;
 
             gitHubUserProfileDataSubscription = gitHubUserProfileDataSource.getGitHubUserProfile(login, isForced)
+                    .subscribeOn(rxSchedulerConfiguration.getComputationThread())
+                    .observeOn(rxSchedulerConfiguration.getMainThread())
                     .subscribe(gitHubUserProfileStatus -> {
                         if (gitHubUserProfileStatus == statusCodes.DEFAULT_RESPONSE) {
                             if (!isViewLoadedAtLeastOnce) {
@@ -114,8 +116,6 @@ public class GitHubUserProfilePresenter {
                     .cast(GitHubUserProfile.class)
                     .filter(realmObject -> realmObject.isLoaded())
                     .filter(realmObject -> realmObject.isValid())
-                    .subscribeOn(rxSchedulerConfiguration.getMainThread())
-                    .observeOn(rxSchedulerConfiguration.getMainThread())
                     .subscribe(gitHubUserProfile -> weakReferenceView.get().setData(gitHubUserProfile),
                             error -> weakReferenceView.get().stopRefreshAnimation());
         }
@@ -132,8 +132,6 @@ public class GitHubUserProfilePresenter {
             gitHubUserProfileViewSubscription.unsubscribe();
         }
 
-        realm.removeAllChangeListeners();
-        realm.close();
         this.weakReferenceView = null;
     }
 
@@ -164,6 +162,7 @@ public class GitHubUserProfilePresenter {
             gitHubUserProfileDataSubscription.unsubscribe();
         }
 
-        gitHubUserProfileDataSource.unSubscribe();
+        realm.removeAllChangeListeners();
+        realm.close();
     }
 }

@@ -16,11 +16,12 @@ public class GitHubUserDao extends AbstractDao {
         realm.close();
     }
 
-    public List<GitHubUser> getGitHubUserList() {
+    public Boolean getGitHubUserListStatus() {
         Realm realm = Realm.getDefaultInstance();
-        List<GitHubUser> gitHubUserList = realm.copyFromRealm(realm.where(GitHubUser.class).findAll());
+        boolean dataStatus;
+        dataStatus = (realm.where(GitHubUser.class).count() > 0);
         realm.close();
-        return gitHubUserList;
+        return dataStatus;
     }
 
     @Override

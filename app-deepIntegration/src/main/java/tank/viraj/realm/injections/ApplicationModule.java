@@ -11,6 +11,8 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import tank.viraj.realm.adapter.MainAdapter;
+import tank.viraj.realm.dao.GitHubUserDao;
+import tank.viraj.realm.dao.GitHubUserProfileDao;
 import tank.viraj.realm.dataSource.GitHubUserListDataSource;
 import tank.viraj.realm.dataSource.GitHubUserProfileDataSource;
 import tank.viraj.realm.presenter.GitHubUserListPresenter;
@@ -47,17 +49,17 @@ public class ApplicationModule {
     @Provides
     GitHubUserListDataSource provideGitHubUserListDataSource(GitHubApiInterface gitHubApiInterface,
                                                              InternetConnection internetConnection,
-                                                             RxSchedulerConfiguration rxSchedulerConfiguration) {
+                                                             GitHubUserDao gitHubUserDao) {
         return new GitHubUserListDataSource(gitHubApiInterface,
-                internetConnection, rxSchedulerConfiguration);
+                internetConnection, gitHubUserDao);
     }
 
     @Provides
     GitHubUserProfileDataSource provideGitHubUserProfileDataSource(GitHubApiInterface gitHubApiInterface,
                                                                    InternetConnection internetConnection,
-                                                                   RxSchedulerConfiguration rxSchedulerConfiguration) {
+                                                                   GitHubUserProfileDao gitHubUserProfileDao) {
         return new GitHubUserProfileDataSource(gitHubApiInterface,
-                internetConnection, rxSchedulerConfiguration);
+                internetConnection, gitHubUserProfileDao);
     }
 
     @Provides
@@ -72,6 +74,16 @@ public class ApplicationModule {
                                                                  GitHubUserProfileDataSource gitHubUserProfileDataSource,
                                                                  InternetConnection internetConnection) {
         return new GitHubUserProfilePresenter(rxSchedulerConfiguration, gitHubUserProfileDataSource, internetConnection);
+    }
+
+    @Provides
+    GitHubUserDao provideGitHubUserDao() {
+        return new GitHubUserDao();
+    }
+
+    @Provides
+    GitHubUserProfileDao provideGitHubUserProfileDao() {
+        return new GitHubUserProfileDao();
     }
 
     @Provides

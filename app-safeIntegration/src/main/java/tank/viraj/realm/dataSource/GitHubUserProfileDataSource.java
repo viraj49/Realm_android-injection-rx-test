@@ -27,8 +27,8 @@ public class GitHubUserProfileDataSource {
         this.gitHubApiInterface = gitHubApiInterface;
         this.gitHubUserProfileDao = gitHubUserProfileDao;
         this.internetConnection = internetConnection;
-        this.rxSchedulerConfiguration = rxSchedulerConfiguration;
         this.gitHubUserProfileSubject = PublishSubject.create();
+        this.rxSchedulerConfiguration = rxSchedulerConfiguration;
     }
 
     public Observable<GitHubUserProfile> getGitHubUserProfileDataSubscription() {

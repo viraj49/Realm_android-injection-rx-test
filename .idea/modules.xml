@@ -3,7 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Realm_android-injection-rx-test.iml" filepath="$PROJECT_DIR$/Realm_android-injection-rx-test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app-deepIntegration/app-deepIntegration.iml" filepath="$PROJECT_DIR$/app-deepIntegration/app-deepIntegration.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app-safeIntegration/app-safeIntegration.iml" filepath="$PROJECT_DIR$/app-safeIntegration/app-safeIntegration.iml" />
     </modules>
   </component>
 </project>

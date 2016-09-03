@@ -14,16 +14,14 @@ public class GitHubUserProfileDao extends AbstractDao {
         realm.close();
     }
 
-    public GitHubUserProfile getProfile(String login) {
+    public Boolean getProfileStatus(String login) {
         Realm realm = Realm.getDefaultInstance();
-        GitHubUserProfile gitHubUserProfile = realm.where(GitHubUserProfile.class)
+        boolean dataStatus;
+        dataStatus = realm.where(GitHubUserProfile.class)
                 .equalTo("login", login)
-                .findFirst();
-        if (gitHubUserProfile != null) {
-            gitHubUserProfile = realm.copyFromRealm(gitHubUserProfile);
-        }
+                .findFirst() != null;
         realm.close();
-        return gitHubUserProfile;
+        return dataStatus;
     }
 
     @Override
