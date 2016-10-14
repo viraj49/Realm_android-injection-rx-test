@@ -44,7 +44,8 @@ public class MainApplication extends Application {
         }
 
         /* realmConfiguration */
-        Realm.setDefaultConfiguration(new RealmConfiguration.Builder(this)
+        Realm.init(this);
+        Realm.setDefaultConfiguration(new RealmConfiguration.Builder()
                 .encryptionKey(key)
                 .deleteRealmIfMigrationNeeded()
                 .build());
