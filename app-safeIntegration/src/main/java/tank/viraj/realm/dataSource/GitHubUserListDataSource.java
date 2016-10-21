@@ -52,7 +52,7 @@ public class GitHubUserListDataSource {
                     getDefaultResponse())
                     .takeFirst(gitHubUserList -> gitHubUserList != null && gitHubUserList.size() > 0)
                     .subscribeOn(rxSchedulerConfiguration.getComputationThread())
-                    .subscribeOn(rxSchedulerConfiguration.getComputationThread())
+                    .observeOn(rxSchedulerConfiguration.getComputationThread())
                     .subscribe(gitHubUserList -> gitHubUserListSubject.onNext(gitHubUserList),
                             error -> gitHubUserListSubject.onNext(getDefaultGitHubUserList())
                     );
