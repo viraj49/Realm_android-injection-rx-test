@@ -96,16 +96,18 @@ public class GitHubUserProfilePresenter {
 
     private void waitForInternetToComeBack(String login) {
         if (internetStatusSubscription == null || internetStatusSubscription.isUnsubscribed()) {
-            internetStatusSubscription = internetConnection.getInternetStatusHotObservable()
-                    .filter(internetConnectionStatus -> internetConnectionStatus)
-                    .subscribeOn(rxSchedulerConfiguration.getComputationThread())
-                    .observeOn(rxSchedulerConfiguration.getComputationThread())
-                    .subscribe(internetConnectionStatus -> {
-                        weakReferenceView.get().startRefreshAnimation();
-                        loadGitHubUserProfile(login);
-                        getGitHubUserProfile(login, true);
-                        stopWaitForInternetToComeBack();
-                    });
+            if (!internetConnection.isInternetOn()) {
+                internetStatusSubscription = internetConnection.getInternetStatusHotObservable()
+                        .filter(internetConnectionStatus -> internetConnectionStatus)
+                        .subscribeOn(rxSchedulerConfiguration.getComputationThread())
+                        .observeOn(rxSchedulerConfiguration.getComputationThread())
+                        .subscribe(internetConnectionStatus -> {
+                            weakReferenceView.get().startRefreshAnimation();
+                            loadGitHubUserProfile(login);
+                            getGitHubUserProfile(login, true);
+                            stopWaitForInternetToComeBack();
+                        });
+            }
         }
         internetConnection.registerBroadCastReceiver();
     }

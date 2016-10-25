@@ -61,7 +61,7 @@ public class GitHubUserListDataSource {
 
     private Observable<List<GitHubUser>> getGitHubUsersFromRealm(boolean isForced) {
         return !isForced ?
-                Observable.just(gitHubUserDao.getGitHubUserList()) :
+                Observable.fromCallable(() -> gitHubUserDao.getGitHubUserList()) :
                 Observable.empty();
     }
 
@@ -81,7 +81,7 @@ public class GitHubUserListDataSource {
     }
 
     private Observable<List<GitHubUser>> getDefaultResponse() {
-        return Observable.just(getDefaultGitHubUserList());
+        return Observable.fromCallable(this::getDefaultGitHubUserList);
     }
 
     private List<GitHubUser> getDefaultGitHubUserList() {

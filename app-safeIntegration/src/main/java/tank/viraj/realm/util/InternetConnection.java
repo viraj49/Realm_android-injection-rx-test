@@ -33,10 +33,10 @@ public class InternetConnection {
     }
 
     public Observable<Boolean> isInternetOnObservable() {
-        return Observable.just(isInternetOn());
+        return Observable.fromCallable(this::isInternetOn);
     }
 
-    private boolean isInternetOn() {
+    public boolean isInternetOn() {
         Runtime runtime = Runtime.getRuntime();
         try {
             Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");

@@ -63,7 +63,7 @@ public class GitHubUserProfileDataSource {
     private Observable<GitHubUserProfile> getGitHubUserProfileFromRealm(String login,
                                                                         boolean isForced) {
         return !isForced
-                ? Observable.just(gitHubUserProfileDao.getProfile(login))
+                ? Observable.fromCallable(() -> gitHubUserProfileDao.getProfile(login))
                 : Observable.empty();
     }
 
